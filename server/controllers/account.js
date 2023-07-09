@@ -10,8 +10,7 @@ export const login = async (req, res) => {
 		//check email exist
 		const existUser = await Account.findOne({ username });
 		if (!existUser) {
-			return res.json({
-				success: false,
+			return res.status(404).json({
 				message: "Username doesnt exist"
 			});
 		}
@@ -26,16 +25,14 @@ export const login = async (req, res) => {
 		} else {
 			generateToken(res, existUser.username);
 			
-			res.json({
-				success: true,
+			res.status(200).json({
 				message: "Login successful",
 				username: existUser.username
 			});
 		}
 	} catch (error) {
 		console.log(error)
-		res.json({
-			success: false,
+		res.status(404).json({
 			message: error.message
 		});
 	}
@@ -51,9 +48,8 @@ export async function register(req, res) {
 	try {
 		const existUser = await Account.findOne({ username });
 		if (existUser) {
-			return res.json({
+			return res.status(404).json({
 				...reponseBody,
-				success: false,
 				message: "Email has already existed",
 			});
 		}
@@ -66,23 +62,20 @@ export async function register(req, res) {
 			account_type: accountType
 		});
 		if(newUser) {
-			res.json({
+			res.status(200).json({
 				...reponseBody,
-				success: true,
 				message: "Create New User Successfully"
 			});
 		} else {
-			res.json({
+			res.status(404).json({
 				...reponseBody,
-				success: false,
 				message: "Create New User failed",
 			});
 		}
 	} catch (error) {
 		console.log(error);
-		res.json({
+		res.status(404).json({
 			...reponseBody,
-			success: false,
 			message: error.message
 		});
 	}
