@@ -1,9 +1,9 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-// import loggerMiddleware from "./middlewares/loggerMiddleware.js";
 import mongoose from "mongoose";
 import errorHandler from "./middlewares/errorHandling.js";
+import rootRouter from "./routes/index.js";
 
 dotenv.config();
 const app = express();
@@ -16,9 +16,9 @@ app.use(cors());
 // middleware to parse info from req.body
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// app.use(loggerMiddleware);
 
-app.use()
+// routes
+app.use('/', rootRouter);
 
 // error handler middleware
 app.use(errorHandler);

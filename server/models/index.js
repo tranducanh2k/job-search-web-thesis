@@ -1,5 +1,5 @@
 import Account from './account.js';
 
-module.exports = {
+export {
     Account
 }

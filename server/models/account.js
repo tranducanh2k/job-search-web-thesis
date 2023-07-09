@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
+import { ACCOUNT_TYPE } from "../utils/enum.js";
 
 const accountSchema = new Schema({
     username: {
@@ -20,4 +21,4 @@ const accountSchema = new Schema({
     }
 });
 
-export default accountSchema;
+export default mongoose.model('Account', accountSchema);
