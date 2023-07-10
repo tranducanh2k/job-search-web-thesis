@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
-// import { ACCOUNT_TYPE } from "../utils/enum.js";
 
 const employeeSchema = new Schema({
     username: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        ref: "Account"
     },
     name: {
         type: String,
@@ -33,7 +33,36 @@ const employeeSchema = new Schema({
     gender: {
         type: String,
         enum: ['male', 'female']
+    },
+    education: [{
+        schoolName: String,
+        field: String,
+        schoolYearIn: Number,
+        schoolYearOut: Number
+    }],
+    experience: [{
+        companyName: String,
+        position: String,
+        seniority: Number,
+        description: String
+    }],
+    skill: [String],
+    certificate: [{
+        certName: String,
+        description: String,
+        image: String
+    }],
+    product: [{
+        link: String,
+        description: String
+    }],
+    cv: {
+        type: String
+    },
+    jobsFollowing: [{type: mongoose.ObjectId, ref: "Job"}],
+    avatar: {
+        type: String
     }
 });
 
-export default mongoose.model('Account', accountSchema);
+export default mongoose.model('Employee', employeeSchema);

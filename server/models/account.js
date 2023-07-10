@@ -14,7 +14,7 @@ const accountSchema = new Schema({
         min: 6,
         max: 100
     },
-    account_type: {
+    accountType: {
         type: String,
         enum: [ACCOUNT_TYPE.EMPLOYEE, ACCOUNT_TYPE.COMPANY],
         default: ACCOUNT_TYPE.EMPLOYEE

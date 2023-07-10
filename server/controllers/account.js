@@ -43,7 +43,7 @@ export async function register(req, res) {
 	const { username, password, accountType } = req.body;
 	let reponseBody = {
 		username: username,
-		account_type: accountType
+		accountType: accountType
 	}
 	try {
 		const existUser = await Account.findOne({ username });
@@ -59,7 +59,7 @@ export async function register(req, res) {
 		const newUser = await Account.create({
 			username: username,
 			password: hashPassword,
-			account_type: accountType
+			accountType: accountType
 		});
 		if(newUser) {
 			res.status(200).json({
