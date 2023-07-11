@@ -2,10 +2,9 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const employeeSchema = new Schema({
-    username: {
-        type: String,
+    accountId: {
+        type: mongoose.ObjectId,
         required: true,
-        unique: true,
         ref: "Account"
     },
     name: {
