@@ -2,7 +2,6 @@ const ACCOUNT_TYPE = {
     EMPLOYEE: 'employee',
     COMPANY: 'company'
 }
-
 const COMPANY_SIZE = {
     SIZE1: '<100',
     SIZE2: '100-499',
@@ -12,7 +11,28 @@ const COMPANY_SIZE = {
     SIZE6: '10.000-19.999',
     SIZE7: '20.000+',
 }
+const APPLICATION_STATUS = {
+    ACCEPTED: 'accepted',
+    DECLINED: 'declined',
+    PENDING: 'pending'
+}
+const JOB_LEVEL = {
+    INTERN: 'intern',
+    FRESHER: 'fresher',
+    JUNIOR: 'junior',
+    MIDDLE: 'middle',
+    SENIOR: 'senior',
+    LEADER: 'leader',
+    MANAGER: 'manager',
+    ALL: 'all' 
+}
+const JOB_TYPE = {
+    IN_OFFICE: 'in-office',
+    HYBRID: 'hybrid',
+    REMOTE: 'remote',
+    OVERSEA: 'oversea'
+}
 
 export {
-    ACCOUNT_TYPE, COMPANY_SIZE
+    ACCOUNT_TYPE, COMPANY_SIZE, APPLICATION_STATUS, JOB_LEVEL, JOB_TYPE
 }

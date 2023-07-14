@@ -1,10 +1,13 @@
 import Image from 'next/image';
+import { useState } from 'react';
 import {AiFillPhone} from "react-icons/ai";
 import {BiSolidBookAlt} from "react-icons/bi";
 import {GiHamburgerMenu, GiGraduateCap} from "react-icons/gi";
 import {IoMdArrowDropdown} from "react-icons/io";
 
 export default function Navbar() {
+    const [showLoginPopup, setShowLoginPopup] = useState(false);
+
     return <div id="navbar">
         <div>
             <Image 
@@ -36,8 +39,10 @@ export default function Navbar() {
                 <a>Recommended Jobs</a>
             </div>
             <div>
-                username
-                <IoMdArrowDropdown/>
+                <button onClick={() => setShowLoginPopup(!showLoginPopup)}>Login</button>
+                {
+                    showLoginPopup && <>hello</>
+                }
             </div>
         </div>
     </div>

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
+import { COMPANY_SIZE } from "../utils/enum.js";
 
 const companySchema = new Schema({
     accountId: {
@@ -39,7 +40,16 @@ const companySchema = new Schema({
             COMPANY_SIZE.SIZE5, COMPANY_SIZE.SIZE6, COMPANY_SIZE.SIZE7],
     },
     industry: [String],
-    
+    tech: [{
+        type: mongoose.ObjectId,
+        ref: "Skill"
+    }],
+    country: String,
+    candidatesFollowing: [{
+        type: mongoose.ObjectId,
+        ref: "Employee"
+    }],
+    logo: String
 });
 
 export default mongoose.model('Company', companySchema);
