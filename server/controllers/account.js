@@ -1,6 +1,6 @@
 import bcryptjs from "bcryptjs";
 import { Account } from "../models/index.js";
-import generateToken from "../utils/generateToken.js";
+import jwt from 'jsonwebtoken';
 
 //[POST] /account/login
 export const login = async (req, res) => {
@@ -23,11 +23,14 @@ export const login = async (req, res) => {
 		if (!passwordVerify) {
 			throw new Error("Wrong password");
 		} else {
-			generateToken(res, existUser.username);
-			
+			const token = jwt.sign({ username }, process.env.SECRET_JWT, {
+				expiresIn: '1d',
+			});
+
 			res.status(200).json({
 				message: "Login successful",
-				username: existUser.username
+				username: existUser.username,
+				token: token
 			});
 		}
 	} catch (error) {
@@ -50,7 +53,7 @@ export async function register(req, res) {
 		if (existUser) {
 			return res.status(404).json({
 				...reponseBody,
-				message: "Email has already existed",
+				message: "Username has already existed",
 			});
 		}
 

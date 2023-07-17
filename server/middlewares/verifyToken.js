@@ -19,13 +19,13 @@ const isAuth = async (req, res, next) => {
             next();
         } catch (error) {
             console.log(error);
-            res.json({
+            res.status(401).json({
                 success: false,
                 message: 'Not authorized, token failed'
             })
         }
     } else {
-        res.json({
+        res.status(401).json({
             success: false,
             message: 'Not authorized, no token'
         });

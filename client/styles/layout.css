@@ -26,18 +26,59 @@
     cursor: pointer;
 }
 
-#navbar > div:nth-child(2) > div:nth-child(2) button {
+#navbar > div:nth-child(2) > div:nth-child(2) > button {
     background-color: #222831;
     color: white;
     border: 1px solid white;
     padding: 10px 30px;
     font-size: 1rem;
     cursor: pointer;
-    transition: border-color 0.2s ease;
+    transition: border-color 0.1s ease;
     transition: color 0.2s ease;
 }
-#navbar > div:nth-child(2) > div:nth-child(2) button:hover {
+#navbar > div:nth-child(2) > div:nth-child(2) > button:hover {
     border-color: #5cb4f7;
-    transition: border-color 0.2s ease;
+    transition: border-color 0.1s ease;
     color: #5cb4f7;
+}
+
+#navbar > div:nth-child(2) > div:nth-child(2) {
+    position: relative;
+}
+
+#navbar .ant-form-item {
+    margin-bottom: 8px;
+}
+
+#login-popup {
+    position: absolute;
+    width: 380px;
+    background-color: white;
+    right: 0;
+    z-index: 10;
+    color: #222831;
+    box-shadow: 0px 2px 4px #2228314a;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    padding: 25px;
+    row-gap: 10px;
+}
+
+#login-form span {
+    text-align: center;
+}
+
+#select-role-form span:not(.ant-btn span) {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+#employee-signup-form h2 {
+    margin-top: 0;
+    display: block;
+    width: 100%;
+    text-align: center;
 }

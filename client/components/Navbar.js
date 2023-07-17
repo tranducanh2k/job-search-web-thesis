@@ -1,14 +1,200 @@
 import Image from 'next/image';
-import { useState } from 'react';
-import {AiFillPhone} from "react-icons/ai";
-import {BiSolidBookAlt} from "react-icons/bi";
+import { useRef, useState } from 'react';
+import {AiFillPhone, AiOutlineUser} from "react-icons/ai";
+import {BsArrowLeft} from "react-icons/bs";
+import {BiSolidBookAlt, BiSolidUser} from "react-icons/bi";
 import {GiHamburgerMenu, GiGraduateCap} from "react-icons/gi";
+import {FaBuilding} from "react-icons/fa";
 import {IoMdArrowDropdown} from "react-icons/io";
+import {RiLockPasswordLine} from "react-icons/ri";
+import { Input, Button, Space, Form, Alert, message } from 'antd';
+import { useDispatch, useSelector } from 'react-redux';
+import { login } from '../redux/authSlice';
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Navbar() {
+    const dispatch = useDispatch();
+    const authState = useSelector((state) => state.auth);
+    const [messageApi, contextHolder] = message.useMessage();
     const [showLoginPopup, setShowLoginPopup] = useState(false);
+    const [form, setForm] = useState('login-form');
+    const [showSignupAlert, setShowSignupAlert] = useState(false);
+    const [signupAlertMessage, setSignupAlertMessage] = useState('');
+    const [signupAlertType, setSignupAlertType] = useState('');
+    const [showSigninAlert, setShowSigninAlert] = useState(false);
+    
+    const onFinishSignin = async (values) => {
+        const response = await fetch(`${API_URL}/account/login`, {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                username: values.username,
+                password: values.password
+            })
+        });
+        const result = await response.json();
+        if(response.status == 200) {
+            dispatch(login(result.username));
+            let now = new Date();
+            let time = now.getTime();
+            let expireTime = time + 1000*3600*24;
+            now.setTime(expireTime);
+            document.cookie = `jwt=${result.token};expires=${+now.toUTCString()};path=/`;
+            setShowLoginPopup(false);
+            messageApi.open({
+                type: 'success',
+                content: 'Log in successfully!',
+            });
+        } else {
+            setShowSigninAlert(true);
+            setTimeout(() => setShowSigninAlert(false), 4000);
+        }
+    }
+    const loginForm = <div id="login-form">
+            <Form onFinish={onFinishSignin}>
+                {showSigninAlert && <Alert style={{marginBottom:'8px'}} showIcon message='Wrong username or password' type='error' />}
+                <Form.Item
+                    name="username"
+                    rules={[{
+                        required: true,
+                        message: 'Please input your username!',
+                    }]}
+                >
+                    <Input placeholder="Username" prefix={<AiOutlineUser/>} size="large" />
+                </Form.Item>
+                <Form.Item
+                    name="password"
+                    rules={[{
+                        required: true,
+                        message: 'Please input your password!',
+                    }]}
+                >
+                    <Input.Password placeholder="Password" prefix={<RiLockPasswordLine/>} size="large" />
+                </Form.Item>
+                <Button type="primary" size="large" htmlType='submit' block>Login</Button>
+                <Space>
+                    <span>Not a member?</span>
+                    <Button type='link' size='large' onClick={()=>setForm('select-role-form')}>Signup</Button>
+                </Space>
+            </Form>
+        </div>
+
+    const selectRoleForm = <div id="select-role-form">
+            <Space direction='vertical' style={{width: '100%'}}>
+                <Button type='text' onClick={()=>setForm('login-form')}><BsArrowLeft style={{fontSize: '20px'}}/></Button>
+                <span>Who are you?</span>
+                <Button size='large' block onClick={()=>setForm('employee-signup-form')}><BiSolidUser/>&nbsp;&nbsp;Employee</Button>
+                <Button size='large' block><FaBuilding/>&nbsp;&nbsp;Company</Button>
+            </Space>
+        </div>
+
+    const onFinishSignup = async (values) => {
+        const response = await fetch(`${API_URL}/account/register`, {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                username: values.username,
+                password: values.password,
+                accountType: 'employee'
+            })
+        });
+        const result = await response.json();
+        if(response.status == 200) {
+            setShowSignupAlert(true);
+            setSignupAlertMessage('You have signed up successfully!');
+            setSignupAlertType('success');
+            setTimeout(() => setShowSignupAlert(false), 5000);
+        } else if (response.status == 404) {
+            setShowSignupAlert(true);
+            setSignupAlertMessage(result.message);
+            setSignupAlertType('error');
+            setTimeout(() => setShowSignupAlert(false), 5000);
+        }
+    };
+    const employeeSignupForm = (
+        <div id="employee-signup-form">
+            <Form
+                onFinish={onFinishSignup}
+            >
+                <Button type="text" onClick={() => setForm("select-role-form")}>
+                    <BsArrowLeft style={{ fontSize: "20px" }} />
+                </Button>
+                <h2>Employee Sign Up</h2>
+                {showSignupAlert && <Alert style={{marginBottom:'8px'}} message={signupAlertMessage} type={signupAlertType} showIcon />}
+                <Form.Item
+                    name="username"
+                    rules={[
+                        {
+                            required: true,
+                            message: "Please input your username!",
+                        },
+                    ]}
+                >
+                    <Input
+                        placeholder="Username"
+                        prefix={<AiOutlineUser />}
+                        size="large"
+                    />
+                </Form.Item>
+                <Form.Item
+                    name="password"
+                    rules={[
+                        {
+                            required: true,
+                            message: "Please input your password!",
+                        },
+                    ]}
+                >
+                    <Input.Password
+                        placeholder="Password"
+                        prefix={<RiLockPasswordLine />}
+                        size="large"
+                    />
+                </Form.Item>
+                <Form.Item
+                    name="re-enter"
+                    rules={[
+                        {
+                            required: true,
+                            message: "Please re-enter your password!",
+                        },
+                        ({ getFieldValue }) => ({
+                            validator(_, value) {
+                                if (!value || getFieldValue('password') === value) {
+                                    return Promise.resolve();
+                                }
+                                return Promise.reject(new Error('The new password that you entered do not match!'));
+                            },
+                        })
+                    ]}
+                    dependencies={['password']}
+                    hasFeedback
+                >
+                    <Input.Password
+                        placeholder="Re-enter password"
+                        prefix={<RiLockPasswordLine />}
+                        size="large"
+                    />
+                </Form.Item>
+                <Space>
+                    <span>Already a member?</span>
+                    <Button
+                        type="link"
+                        size="large"
+                        onClick={() => setForm("login-form")}
+                    >
+                        Login
+                    </Button>
+                </Space>
+                <Button type="primary" size="large" block htmlType="submit">
+                    Sign Up
+                </Button>
+            </Form>
+        </div>
+    );
 
     return <div id="navbar">
+        {contextHolder}
         <div>
             <Image 
                 src="/images/vecteezy_job-search-logo_8688110.jpg" 
@@ -39,9 +225,22 @@ export default function Navbar() {
                 <a>Recommended Jobs</a>
             </div>
             <div>
-                <button onClick={() => setShowLoginPopup(!showLoginPopup)}>Login</button>
+                {authState.currentUser? 
+                    <a>{authState.currentUser}</a> :
+                    <button onClick={() => setShowLoginPopup(!showLoginPopup)}>Login</button>}
                 {
-                    showLoginPopup && <>hello</>
+                    showLoginPopup && 
+                    <div id="login-popup">
+                        {
+                            form === 'login-form' && loginForm
+                        }
+                        {
+                            form === 'select-role-form' && selectRoleForm
+                        }
+                        {
+                            form === 'employee-signup-form' && employeeSignupForm
+                        }
+                    </div>
                 }
             </div>
         </div>

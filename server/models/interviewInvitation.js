@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
+import {APPLICATION_STATUS} from '../utils/enum.js';
 
 const interviewInvitationSchema = new Schema({
     jobId: {

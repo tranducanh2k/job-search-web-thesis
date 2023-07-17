@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
-import { JOB_TYPE } from "../utils/enum.js";
+import { JOB_TYPE, JOB_LEVEL } from "../utils/enum.js";
 
 const jobSchema = new Schema({
     companyId: {
@@ -19,7 +19,8 @@ const jobSchema = new Schema({
     jobLevel: {
         type: String,
         required: true,
-        enum: [Object.values(JOB_LEVEL)]
+        enum: [JOB_LEVEL.ALL,JOB_LEVEL.FRESHER,JOB_LEVEL.INTERN,JOB_LEVEL.JUNIOR,JOB_LEVEL.LEADER,JOB_LEVEL.MANAGER,
+            JOB_LEVEL.MIDDLE,JOB_LEVEL.SENIOR]
     },
     position: {
         type: String,
@@ -34,7 +35,7 @@ const jobSchema = new Schema({
     jobType: {
         type: String,
         required: true,
-        enum: [Object.values(JOB_TYPE)]
+        enum: [JOB_TYPE.HYBRID, JOB_TYPE.IN_OFFICE, JOB_TYPE.OVERSEA, JOB_TYPE.REMOTE]
     },
     fullTime: {
         type: Boolean,

@@ -23,15 +23,15 @@ const employeeSchema = new Schema({
         type: Number,
         required: true
     },
+    gender: {
+        type: String,
+        enum: ['male', 'female']
+    },
     address: {
         type: String
     },
     province: {
         type: String
-    },
-    gender: {
-        type: String,
-        enum: ['male', 'female']
     },
     education: [{
         schoolName: String,
