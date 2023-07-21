@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { HYDRATE } from 'next-redux-wrapper';
 
 const initialState = {
     currentUser: null
@@ -12,7 +13,7 @@ const authSlice = createSlice({
             state.currentUser = action.payload;
         },
         logout: (state) => {
-            state = initialState;
+            state.currentUser = null;
         }
     }
 });

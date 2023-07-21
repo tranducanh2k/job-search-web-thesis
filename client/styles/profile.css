@@ -1,0 +1,40 @@
+#profile-layout {
+    background-color: #f0f0f0;
+    padding: 40px 13vw;
+    display: flex;
+    flex-direction: row;
+    column-gap: 40px;
+}
+
+#profile-layout > div:nth-child(2) {
+    background-color: white;
+    border-radius: 8px;
+    flex: 1;
+    padding: 30px 40px;
+}
+
+#profile-menu {
+    background-color: white;
+    border-radius: 8px;
+    width: 250px;
+    padding: 30px 20px;
+    height: fit-content;
+}
+
+#profile-menu > div {
+    padding: 10px 20px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    cursor: pointer;
+}
+#profile-menu > div:hover {
+    background-color: #e5f2fb;
+    transition: background-color 1s ease;
+}
+
+#profile-menu svg {
+    margin-right: 12px;
+    font-size: 18px;
+    position: relative;
+    top: 2px;
+}

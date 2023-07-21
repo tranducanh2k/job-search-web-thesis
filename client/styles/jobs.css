@@ -1,0 +1,26 @@
+#jobs .main-search {
+    padding: 20px 9vw;
+}
+
+#jobs > div:nth-child(2) {
+    background-color: #f3f5f7;
+    padding: 20px 9vw;
+}
+
+#jobs .search-result {
+    border-radius: 6px;
+    background-color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+    column-gap: 20px;
+}
+
+#jobs .advanced-search {
+    background-color: green;
+    width: 300px;
+}
+
+#jobs .jobs-result {
+    flex: 1;
+}

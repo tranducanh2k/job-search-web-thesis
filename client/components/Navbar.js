@@ -1,19 +1,22 @@
-import Image from 'next/image';
-import { useRef, useState } from 'react';
+import Image from 'next/image'; 
+import { useState } from 'react';
 import {AiFillPhone, AiOutlineUser} from "react-icons/ai";
 import {BsArrowLeft} from "react-icons/bs";
-import {BiSolidBookAlt, BiSolidUser} from "react-icons/bi";
+import {BiSolidBookAlt, BiSolidUser, BiLogOut} from "react-icons/bi";
 import {GiHamburgerMenu, GiGraduateCap} from "react-icons/gi";
 import {FaBuilding} from "react-icons/fa";
 import {IoMdArrowDropdown} from "react-icons/io";
 import {RiLockPasswordLine} from "react-icons/ri";
-import { Input, Button, Space, Form, Alert, message } from 'antd';
+import { Input, Button, Space, Form, Alert, message, Dropdown } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { login } from '../redux/authSlice';
+import { login, logout } from '../redux/authSlice';
+import { useRouter } from 'next/router'
+import {clearCookies, setLoginCookies} from '../utils/cookieHandler';
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Navbar() {
     const dispatch = useDispatch();
+    const router = useRouter();
     const authState = useSelector((state) => state.auth);
     const [messageApi, contextHolder] = message.useMessage();
     const [showLoginPopup, setShowLoginPopup] = useState(false);
@@ -22,6 +25,42 @@ export default function Navbar() {
     const [signupAlertMessage, setSignupAlertMessage] = useState('');
     const [signupAlertType, setSignupAlertType] = useState('');
     const [showSigninAlert, setShowSigninAlert] = useState(false);
+
+    const profileMenuItems = [
+        {
+            key: "1",
+            icon: <BiSolidUser/>,
+            label: (
+                <a
+                    rel="noopener noreferrer"
+                    onClick={() => router.push('/profile')}
+                >
+                    Dashboard
+                </a>
+            ),
+        },
+        {
+            key: "3",
+            icon: <BiLogOut/>,
+            label: (
+                <a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => {
+                        dispatch(logout());
+                        router.push('/');
+                        clearCookies();
+                        messageApi.open({
+                            type: 'success',
+                            content: 'Log out successfully!',
+                        });
+                    }}
+                >
+                    Log out
+                </a>
+            ),
+        }
+    ];
     
     const onFinishSignin = async (values) => {
         const response = await fetch(`${API_URL}/account/login`, {
@@ -34,12 +73,8 @@ export default function Navbar() {
         });
         const result = await response.json();
         if(response.status == 200) {
-            dispatch(login(result.username));
-            let now = new Date();
-            let time = now.getTime();
-            let expireTime = time + 1000*3600*24;
-            now.setTime(expireTime);
-            document.cookie = `jwt=${result.token};expires=${+now.toUTCString()};path=/`;
+            dispatch(login(result.user));
+            setLoginCookies(result.token, result.user.accountId);
             setShowLoginPopup(false);
             messageApi.open({
                 type: 'success',
@@ -201,6 +236,8 @@ export default function Navbar() {
                 width="120px"
                 height="110px"
                 alt='logo'
+                onClick={() => router.push('/')}
+                style={{cursor: 'pointer'}}
             />
             <ul>
                 <li><AiFillPhone/> 038.211.4388</li>
@@ -218,16 +255,21 @@ export default function Navbar() {
         <div>
             <div>
                 <GiHamburgerMenu/>
-                <a>IT Jobs</a>
-                <a>IT Companies</a>
+                <a onClick={() => router.push('/jobs')}>IT Jobs</a>
+                <a onClick={() => router.push('/companies')}>IT Companies</a>
                 <a>Jobs Following</a>
                 <a>IT Fresher Jobs <GiGraduateCap/></a>
                 <a>Recommended Jobs</a>
             </div>
             <div>
-                {authState.currentUser? 
-                    <a>{authState.currentUser}</a> :
-                    <button onClick={() => setShowLoginPopup(!showLoginPopup)}>Login</button>}
+                {authState.currentUser && authState.currentUser.username? 
+                    <Dropdown menu={{items: profileMenuItems}} placement="bottomRight">
+                        <a id='login-username'>
+                            {authState.currentUser.username}&nbsp;&nbsp;<IoMdArrowDropdown style={{transform:'scale(1.5)'}}/>
+                        </a> 
+                    </Dropdown>
+                    : <button onClick={() => setShowLoginPopup(!showLoginPopup)}>Login</button>
+                }
                 {
                     showLoginPopup && 
                     <div id="login-popup">
