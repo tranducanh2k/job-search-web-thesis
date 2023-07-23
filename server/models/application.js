@@ -29,6 +29,10 @@ const applicationSchema = new Schema({
         type: String,
         required: true,
         enum: [APPLICATION_STATUS.ACCEPTED, APPLICATION_STATUS.DECLINED, APPLICATION_STATUS.PENDING]
+    },
+    timestamp: {
+        type: Date,
+        default: Date.now
     }
 });
 

@@ -1,10 +1,10 @@
 import jwt from "jsonwebtoken";
-import { Account } from "../models";
+import { Account } from "../models/index.js";
 
 const isAuth = async (req, res, next) => {
 	// check if token is valid
 	if (!req.get("authorization")) {
-		return res.json({
+		return res.status(400).json({
             success: false,
 			message: "Bad Request",
 		});
@@ -15,17 +15,17 @@ const isAuth = async (req, res, next) => {
     if(token) {
         try {
             const decoded = jwt.verify(token, process.env.SECRET_JWT);
-            req.user = await Account.findOne({username: decoded.username}).select('-password');
+            await Account.findOne({username: decoded.username}).select('-password');
             next();
         } catch (error) {
             console.log(error);
-            res.status(401).json({
+            return res.status(401).json({
                 success: false,
                 message: 'Not authorized, token failed'
             })
         }
     } else {
-        res.status(401).json({
+        return res.status(401).json({
             success: false,
             message: 'Not authorized, no token'
         });

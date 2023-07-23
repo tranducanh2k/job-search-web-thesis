@@ -1,11 +1,16 @@
-const setLoginCookies = (token, accountId) => {
+const setLoginCookies = (token, accountId, employeeId, companyId) => {
     let now = new Date();
     let time = now.getTime();
     let expireTime = time + 1000*3600*24;
     now.setTime(expireTime);
     document.cookie = `jwt=${token};expires=${+now.toUTCString()};path=/`;
-
     document.cookie = `accountId=${accountId};expires=${+now.toUTCString()};path=/`;
+    if(employeeId) {
+        document.cookie = `employeeId=${employeeId};expires=${+now.toUTCString()};path=/`;
+    }
+    if(companyId) {
+        document.cookie = `companyId=${companyId};expires=${+now.toUTCString()};path=/`;
+    }
 }
 
 const getCookiesClientSide = (name) => {

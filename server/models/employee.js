@@ -35,9 +35,7 @@ const employeeSchema = new Schema({
     },
     education: [{
         schoolName: String,
-        field: String,
-        schoolYearIn: Number,
-        schoolYearOut: Number
+        field: String
     }],
     experience: [{
         companyName: String,

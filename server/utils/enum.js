@@ -27,10 +27,10 @@ const JOB_LEVEL = {
     ALL: 'all' 
 }
 const JOB_TYPE = {
-    IN_OFFICE: 'in-office',
-    HYBRID: 'hybrid',
-    REMOTE: 'remote',
-    OVERSEA: 'oversea'
+    IN_OFFICE: 'In-Office',
+    HYBRID: 'Hybrid',
+    REMOTE: 'Remote',
+    OVERSEA: 'Oversea'
 }
 
 export {

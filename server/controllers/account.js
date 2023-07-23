@@ -1,5 +1,5 @@
 import bcryptjs from "bcryptjs";
-import { Account } from "../models/index.js";
+import { Account, Company, Employee } from "../models/index.js";
 import jwt from 'jsonwebtoken';
 
 //[POST] /account/login
@@ -14,7 +14,7 @@ export const login = async (req, res) => {
 				message: "Username doesnt exist"
 			});
 		}
-
+		
 		//check password
 		const passwordVerify = await bcryptjs.compare(
 			password,
@@ -26,17 +26,25 @@ export const login = async (req, res) => {
 			const token = jwt.sign({ username }, process.env.SECRET_JWT, {
 				expiresIn: '1d',
 			});
+			let employee = await Employee.findOne({accountId: existUser._id});
+			let company = await Company.findOne({accountId: existUser._id});
 
 			res.status(200).json({
 				message: "Login successful",
-				username: existUser.username,
-				token: token
+				user: {
+					username: existUser.username,
+					accountType: existUser.accountType,
+					accountId: existUser._id,
+				},
+				token: token,
+				employeeId: employee? employee._id : '',
+				companyId: company? company._id : ''
 			});
 		}
 	} catch (error) {
 		console.log(error)
 		res.status(404).json({
-			message: error.message
+			message: error
 		});
 	}
 }
@@ -67,7 +75,8 @@ export async function register(req, res) {
 		if(newUser) {
 			res.status(200).json({
 				...reponseBody,
-				message: "Create New User Successfully"
+				message: "Create New User Successfully",
+				accountId: newUser._id
 			});
 		} else {
 			res.status(404).json({
@@ -79,7 +88,7 @@ export async function register(req, res) {
 		console.log(error);
 		res.status(404).json({
 			...reponseBody,
-			message: error.message
+			message: error
 		});
 	}
 }

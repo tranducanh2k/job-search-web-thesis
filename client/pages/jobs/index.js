@@ -1,9 +1,11 @@
 import { Input, Space } from 'antd';
 const { Search } = Input;
 import { useRouter } from 'next/router';
+import { wrapper } from '../../redux/store.js';
+import JobItem from '../../components/jobs/JobItem.js';
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-
-export default function Jobs() {
+export default function Jobs(props) {
     const router = useRouter();
 
     return <div id='jobs'>
@@ -22,21 +24,30 @@ export default function Jobs() {
                     advanced search
                 </div>
                 <div className='jobs-result'>
-                    <button onClick={() => router.push({pathname:'/jobs', query: {page: 1}})}>1</button>
-                    <button onClick={() => router.push({pathname:'/jobs', query: {page: 2}})}>2</button>
+                    {
+                        props.jobsList.map(job => <JobItem jobData={job} />)
+                    }
                 </div>
             </div>
         </div>
     </div>
 }
 
-export const getServerSideProps = async (ctx) => {
-    const {page} = ctx.query;
-    console.log(page)
+export const getServerSideProps =  wrapper.getServerSideProps(store => async (ctx) => {
+    let {page} = ctx.query;
+    if(!page) {
+        page = 1;
+    }
+
+    const response = await fetch(`${API_URL}/job/get-jobs-by-page?page=${page}`, {
+        method: 'GET',
+        headers: {'Content-Type': 'application/json'}
+    });
+    let result = await response.json();
 
     return {
         props: {
-            
+            jobsList: result.jobsList
         }
     }
-}
+})

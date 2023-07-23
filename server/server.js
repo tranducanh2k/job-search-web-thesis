@@ -11,7 +11,10 @@ const PORT = process.env.PORT;
 
 //setup cors
 app.options("*", cors());
-app.use(cors());
+app.use(cors({
+	credentials: true,
+	origin: '*'
+}));
 
 // middleware to parse info from req.body
 app.use(express.json());

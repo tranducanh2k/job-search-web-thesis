@@ -14,10 +14,13 @@ const authSlice = createSlice({
         },
         logout: (state) => {
             state.currentUser = null;
+        },
+        checkCreatedEmployee: (state, action) => {
+            state.currentUser.employeeId = action.payload;
         }
     }
 });
 
-export const {logout, login} = authSlice.actions;
+export const {logout, login, checkCreatedEmployee} = authSlice.actions;
 
 export default authSlice.reducer;

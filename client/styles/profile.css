@@ -11,6 +11,7 @@
     border-radius: 8px;
     flex: 1;
     padding: 30px 40px;
+    box-shadow: -1px 1px 6px rgba(0,0,0,.05);
 }
 
 #profile-menu {
@@ -19,6 +20,7 @@
     width: 250px;
     padding: 30px 20px;
     height: fit-content;
+    box-shadow: -1px 1px 6px rgba(0,0,0,.05);
 }
 
 #profile-menu > div {
@@ -37,4 +39,63 @@
     font-size: 18px;
     position: relative;
     top: 2px;
+}
+
+#profile-menu .emp-application {
+    display: flex;
+}
+
+#app-job-item {
+    padding: 20px;
+    border: 1px solid #ebebeb;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: row;
+    column-gap: 20px;
+}
+#app-job-item:hover {
+    background-color: #f3f5f7;
+    border-color: #f3f5f7;
+}
+#app-job-item:hover h3 {
+    color: #3b78dc;
+} 
+#app-job-item h3 {
+    cursor: pointer;
+    max-width: 350px !important;
+}
+#app-job-item .job-sub-info {
+    color: #6f7882!important;
+    font-size: 15px;
+}
+#app-job-item > div:nth-child(1) {
+    width: fit-content;
+}
+#app-job-item > div {width: 100%;}
+#app-job-item > div > div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 10px;
+}
+#app-job-item h3, #app-job-item h4 {
+    margin-top: 0;
+    margin-bottom: 0px;
+    max-width: 400px;
+}
+#app-job-item h4 {
+    color: #3b78dc;
+}
+#app-job-item > div > div:nth-child(2) {
+    margin-bottom: 20px;
+}
+#app-job-item .status-pending {
+    color: #ff7700;
+}
+#app-job-item .status-accepted {
+    color: #3b78dc;
+}
+#app-job-item .status-declined {
+    color: red;
 }

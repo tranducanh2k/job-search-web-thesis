@@ -30,26 +30,29 @@ const companySchema = new Schema({
         type: String,
         required: true
     },
-    address: {
-        type: String
-    },
+    address: [String],
     companySize: {
         type: String,
         required: true,
         enum: [COMPANY_SIZE.SIZE1, COMPANY_SIZE.SIZE2, COMPANY_SIZE.SIZE3, COMPANY_SIZE.SIZE4,
             COMPANY_SIZE.SIZE5, COMPANY_SIZE.SIZE6, COMPANY_SIZE.SIZE7],
     },
-    industry: [String],
+    industry: {
+        type: [String],
+        required: true
+    },
     tech: [{
         type: mongoose.ObjectId,
         ref: "Skill"
     }],
-    country: String,
+    country: {
+        type: String,
+        required: true
+    },
     candidatesFollowing: [{
         type: mongoose.ObjectId,
         ref: "Employee"
-    }],
-    logo: String
+    }]
 });
 
 export default mongoose.model('Company', companySchema);

@@ -1,16 +1,17 @@
-import { Button, Form, Input, InputNumber, Select, Upload, message } from "antd";
+import { Button, Form, Input, InputNumber, Select, Upload, message,Alert } from "antd";
 import ProfileLayout from "../../components/profile/ProfileLayout";
 import { PROVINCES } from "../../utils/enum";
 import {AiOutlineUpload,AiOutlinePlus} from "react-icons/ai";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {wrapper} from "../../redux/store.js";
-import { logout } from "../../redux/authSlice";
+import { checkCreatedEmployee, logout } from "../../redux/authSlice";
 import cookies from 'next-cookies';
 import { clearCookiesServerSide, getCookiesClientSide } from "../../utils/cookieHandler";
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function MyProfile({employeeData}) {
     const authState = useSelector((state) => state.auth);
+    const dispatch = useDispatch();
     const [messageApi, contextHolder] = message.useMessage();
     const {Option} = Select;
     const [form] = Form.useForm();
@@ -59,6 +60,7 @@ export default function MyProfile({employeeData}) {
         const result = await response.json();
         if(response.status == 200) {
             messageApi.success(result.message);
+            dispatch(checkCreatedEmployee(result.employee._id));
         } else {
             messageApi.error(result.message);
         }
@@ -66,6 +68,8 @@ export default function MyProfile({employeeData}) {
 
     return <div id="profile">
         {contextHolder}
+        {(!authState.currentUser?.employeeId) &&  <Alert style={{marginBottom:'20px'}} type="warning" showIcon message="You have not created employee profile. Please update to apply job" />}
+        <h2 style={{marginTop:0, marginLeft:'12%'}}>Employee profile</h2>
         <Form
             {...formItemLayout}
             initialValues={employeeData}
@@ -210,7 +214,6 @@ export const getServerSideProps = wrapper.getServerSideProps(store => async ({re
     })
     if(authResponse.status != 200) {
         clearCookiesServerSide(req.cookies, res);
-        // store.dispatch(logout())
         return {
             redirect: {
                 permanent: false,

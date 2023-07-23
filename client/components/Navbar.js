@@ -9,7 +9,7 @@ import {IoMdArrowDropdown} from "react-icons/io";
 import {RiLockPasswordLine} from "react-icons/ri";
 import { Input, Button, Space, Form, Alert, message, Dropdown } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { login, logout } from '../redux/authSlice';
+import { checkCreatedEmployee, login, logout } from '../redux/authSlice';
 import { useRouter } from 'next/router'
 import {clearCookies, setLoginCookies} from '../utils/cookieHandler';
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -33,7 +33,13 @@ export default function Navbar() {
             label: (
                 <a
                     rel="noopener noreferrer"
-                    onClick={() => router.push('/profile')}
+                    onClick={() => {
+                        if(authState.currentUser.accountType === 'employee') {
+                            router.push('/profile')
+                        } else if(authState.currentUser.accountType === 'company') {
+                            router.push('/company-profile')
+                        }
+                    }}
                 >
                     Dashboard
                 </a>
@@ -74,7 +80,8 @@ export default function Navbar() {
         const result = await response.json();
         if(response.status == 200) {
             dispatch(login(result.user));
-            setLoginCookies(result.token, result.user.accountId);
+            dispatch(checkCreatedEmployee(result.employeeId));
+            setLoginCookies(result.token, result.user.accountId, result.employeeId, result.companyId);
             setShowLoginPopup(false);
             messageApi.open({
                 type: 'success',
@@ -119,7 +126,16 @@ export default function Navbar() {
                 <Button type='text' onClick={()=>setForm('login-form')}><BsArrowLeft style={{fontSize: '20px'}}/></Button>
                 <span>Who are you?</span>
                 <Button size='large' block onClick={()=>setForm('employee-signup-form')}><BiSolidUser/>&nbsp;&nbsp;Employee</Button>
-                <Button size='large' block><FaBuilding/>&nbsp;&nbsp;Company</Button>
+                <Button 
+                    size='large' 
+                    block onClick={()=>{
+                        router.push('/signup');
+                        setShowLoginPopup(false);
+                        setForm('login-form');
+                    }}
+                >
+                    <FaBuilding/>&nbsp;&nbsp;Company
+                </Button>
             </Space>
         </div>
 
@@ -255,16 +271,24 @@ export default function Navbar() {
         <div>
             <div>
                 <GiHamburgerMenu/>
+                {
+                    authState.currentUser?.accountType === 'company' && <a>Find Employee</a>
+                }
                 <a onClick={() => router.push('/jobs')}>IT Jobs</a>
                 <a onClick={() => router.push('/companies')}>IT Companies</a>
-                <a>Jobs Following</a>
+                {
+                    authState.currentUser?.accountType === 'employee' && <a>Jobs Following</a>
+                }
                 <a>IT Fresher Jobs <GiGraduateCap/></a>
-                <a>Recommended Jobs</a>
+                {
+                    authState.currentUser?.accountType === 'employee' && <a>Recommended Jobs</a>
+                }
             </div>
             <div>
                 {authState.currentUser && authState.currentUser.username? 
                     <Dropdown menu={{items: profileMenuItems}} placement="bottomRight">
                         <a id='login-username'>
+                            {authState.currentUser.accountType}:&nbsp;
                             {authState.currentUser.username}&nbsp;&nbsp;<IoMdArrowDropdown style={{transform:'scale(1.5)'}}/>
                         </a> 
                     </Dropdown>

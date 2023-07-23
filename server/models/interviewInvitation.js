@@ -22,14 +22,14 @@ const interviewInvitationSchema = new Schema({
         type: String,
         required: true
     },
-    date: {
-        type: Date,
-        required: true
-    },
     status: {
         type: String,
         required: true,
         enum: [APPLICATION_STATUS.ACCEPTED, APPLICATION_STATUS.DECLINED, APPLICATION_STATUS.PENDING]
+    },
+    timestamp: {
+        type: Date,
+        default: Date.now
     }
 });
 

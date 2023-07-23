@@ -15,7 +15,10 @@ const interviewSchema = new Schema({
     acceptedJobsList: [{
         type: mongoose.ObjectId,
         ref: "Job"
-    }]
+    }],
+    interviewDate: {
+        type: Date
+    },
 });
 
 export default mongoose.model('Interview', interviewSchema);

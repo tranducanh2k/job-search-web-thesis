@@ -22,10 +22,6 @@ const jobSchema = new Schema({
         enum: [JOB_LEVEL.ALL,JOB_LEVEL.FRESHER,JOB_LEVEL.INTERN,JOB_LEVEL.JUNIOR,JOB_LEVEL.LEADER,JOB_LEVEL.MANAGER,
             JOB_LEVEL.MIDDLE,JOB_LEVEL.SENIOR]
     },
-    position: {
-        type: String,
-        required: true
-    },
     minSalary: {
         type: Number
     },
@@ -47,8 +43,12 @@ const jobSchema = new Schema({
         ref: "Skill"
     }],
     description: {
-        type: String,
-        required: true
+        role: String,
+        skillRequired: String,
+        benefit: String
+    },
+    logo: {
+        type: String
     }
 });
 
