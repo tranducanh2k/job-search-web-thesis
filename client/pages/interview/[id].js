@@ -38,9 +38,12 @@ export default function Interview({data}) {
         socket.on("receive_message", (data) => {
             setMessageList((list) => [...list, data]);
         });
+
+        return () => {
+            socket.off('receive_message');
+        };
     }, []);
 
-    console.log(messageList)
     return <div id="interview">
         <div>
 
@@ -48,18 +51,18 @@ export default function Interview({data}) {
         <div className='message-div'>
             <header>
                 {
-                    currentUser.accountType === 'company' && <span>{data.interview.employeeId.name}</span>
+                    currentUser?.accountType === 'company' && <span>{data.interview.employeeId.name}</span>
                 }
                 {
-                    currentUser.accountType === 'employee' && <span>{data.interview.companyId.name}</span>
+                    currentUser?.accountType === 'employee' && <span>{data.interview.companyId.name}</span>
                 }
             </header>
             <div className='message-body'>
                 {
                     messageList.map(message => {
                         let messageClass = '';
-                        if((currentUser.accountType === 'company' && message.senderId == data.interview.companyId._id) ||
-                            (currentUser.accountType === 'employee' && message.senderId == data.interview.employeeId._id)) {
+                        if((currentUser?.accountType === 'company' && message.senderId == data.interview.companyId._id) ||
+                            (currentUser?.accountType === 'employee' && message.senderId == data.interview.employeeId._id)) {
                             messageClass = 'me';
                         } else {
                             messageClass = 'you';
