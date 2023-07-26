@@ -11,8 +11,8 @@ export default function EmployeeApplications(props) {
     const token = getCookiesClientSide('jwt');
     const [messageApi, contextHolder] = message.useMessage();
     const [applications, setApplications] = useState(props.applications)
-
-    const handleAcceptApp = async (id, status, employeeId, companyId) => {
+    
+    const handleAcceptApp = async (id, status, employeeId, companyId, jobId) => {
         let response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/application/update/${id}`, {
             method: "PUT",
             headers: {
@@ -32,22 +32,21 @@ export default function EmployeeApplications(props) {
                 })
                 return newState;
             });
-
+            
             if(status === 'accepted') {
+                let acceptedJobsList = [jobId];
+                applications.forEach(app => {
+                    if(app.status === 'accepted') {
+                        acceptedJobsList.push(app.jobId._id);
+                    }
+                })
                 let response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/create-or-update`, {
                     method: "POST",
                     headers: {
                         'Content-Type':'application/json ',
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify({ 
-                        employeeId, companyId, 
-                        acceptedJobsList: applications.map(app => {
-                            if(app.status === 'accepted') {
-                                return app._id;
-                            }
-                        })
-                    })
+                    body: JSON.stringify({ employeeId, companyId, acceptedJobsList })
                 });
                 if(response.status == 200) {
                     messageApi.success('Create interview successfully');
@@ -59,7 +58,7 @@ export default function EmployeeApplications(props) {
             messageApi.error('Update failed');
         }
     }
-
+    
     const handleOpenChatRoom = async (employeeId, companyId) => {
         let response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/get-by-company-employee`, {
             method: "POST",
@@ -111,7 +110,7 @@ export default function EmployeeApplications(props) {
                                 app.status === 'pending' && 
                                 <div>
                                     <Button type='primary' style={{background:'green'}}
-                                        onClick={() => handleAcceptApp(app._id, 'accepted', app.employeeId, app.companyId)}
+                                        onClick={() => handleAcceptApp(app._id, 'accepted', app.employeeId, app.companyId, app.jobId._id)}
                                     >
                                         Accept
                                     </Button>

@@ -1,4 +1,3 @@
-import { ObjectId } from "mongodb";
 import {Application} from "../models/index.js";
 
 export const getApplicationbyEmployee = async (req, res) => {

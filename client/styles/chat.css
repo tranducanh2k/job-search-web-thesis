@@ -1,0 +1,42 @@
+*:has(#interview) #navbar > div:nth-child(1) {
+    display: none;
+}
+#interview {
+    display: flex;
+    flex-direction: row;
+    height: calc(100vh - 71.09px);
+}
+#interview > div:nth-child(1) {
+    border-right: 1px solid #eee!important;
+    width: 25%;
+}
+#interview .info-div {
+    border-left: 1px solid #eee!important;
+    width: 25%;
+}
+#interview .message-div {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+}
+#interview .message-div header {
+    height: 90px;
+    box-shadow: 0 2px 5px rgba(0,0,0,.050980392156862744);
+    border-bottom: 1px solid #eee!important;
+}
+#interview .message-body {
+    flex: 1;
+    overflow: auto;
+}
+#interview .message-body .you {
+    
+}
+#interview .message-body div.me {
+    display: flex;
+    justify-content: flex-end;
+}
+#interview footer {
+    padding: 15px;
+    background-color: rgb(228, 228, 255);
+    display: flex;
+}

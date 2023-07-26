@@ -75,7 +75,40 @@ export async function addMessage(req, res) {
     let message = req.body;
 
     try {
-        let createdMessage = await ChatMessage({});
+        let createdMessage = await ChatMessage(message);
+        if(createdMessage) {
+            return res.status(200).json({
+                message: 'create message successfully',
+                createdMessage
+            })
+        } else {
+            return res.status(404).json({
+                message: 'create message failed'
+            })
+        }
+    } catch(err) {
+        console.log(err)
+        return res.status(404).json({
+            message: err
+        })
+    }
+}
+
+export async function getInterviewById(req, res) {
+    let id = req.params.id;
+
+    try {
+        let interview = await Interview.findById(id)
+                                        .populate("employeeId")
+                                        .populate("companyId")
+                                        .populate("acceptedJobsList");
+        let messages = await ChatMessage.find({interviewId: interview._id})
+                                        .sort({timestamp: 1});
+        return res.status(200).json({
+            message: 'Get interview by id successfully',
+            interview, messages
+        })
+
     } catch(err) {
         console.log(err)
         return res.status(404).json({
