@@ -7,7 +7,6 @@ import Employee from './employee.js'
 import Interview from './interview.js'
 import InterviewInvitation from './interviewInvitation.js'
 import Job from './job.js'
-import PositionName from './positionName.js'
 import Skill from './skill.js'
 
 export {
@@ -20,6 +19,5 @@ export {
     Interview,
     InterviewInvitation,
     Job,
-    PositionName,
     Skill
 }
