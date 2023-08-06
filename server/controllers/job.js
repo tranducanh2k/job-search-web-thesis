@@ -49,3 +49,14 @@ export async function getJobsByPage(req, res) {
     }
 }
 
+export async function getJobsByCompanyId(req, res) {
+    const id = req.params.id;
+
+    try {
+    } catch (err) {
+        console.log(err)
+        return res.status(404).json({
+            message: 'Get jobs by page failed'
+        })
+    }
+}

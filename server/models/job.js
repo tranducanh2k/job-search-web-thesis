@@ -46,9 +46,6 @@ const jobSchema = new Schema({
         role: String,
         skillRequired: String,
         benefit: String
-    },
-    logo: {
-        type: String
     }
 });
 

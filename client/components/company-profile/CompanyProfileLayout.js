@@ -20,7 +20,8 @@ export default function CompanyProfileLayout({children}) {
                 <ImProfile/>Company Profile
             </div>
             <div
-
+                onClick={() => router.push('/company-profile/create-jobs')}
+                style={router.pathname==='/company-profile/create-jobs'? {backgroundColor:'#e5f2fb'} : {}}
             >
                 <BsFillBriefcaseFill/>Create Jobs
             </div>
