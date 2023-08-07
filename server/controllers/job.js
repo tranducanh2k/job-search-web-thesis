@@ -53,6 +53,11 @@ export async function getJobsByCompanyId(req, res) {
     const id = req.params.id;
 
     try {
+        let jobs = await Job.find({ companyId: id }).populate('requiredSkill');
+        return res.status(200).json({
+            message: 'get jobs by company id successfully',
+            jobs
+        })
     } catch (err) {
         console.log(err)
         return res.status(404).json({

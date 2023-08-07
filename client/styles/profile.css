@@ -100,3 +100,9 @@
 #app-job-item .status-declined {
     color: red;
 }
+
+#create-jobs > div:nth-child(1) {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
