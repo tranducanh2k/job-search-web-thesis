@@ -3,7 +3,7 @@ import { useState } from 'react';
 import {AiFillPhone, AiOutlineUser} from "react-icons/ai";
 import {BsArrowLeft} from "react-icons/bs";
 import {BiSolidBookAlt, BiSolidUser, BiLogOut} from "react-icons/bi";
-import {GiHamburgerMenu, GiGraduateCap} from "react-icons/gi";
+import {GiHamburgerMenu} from "react-icons/gi";
 import {FaBuilding} from "react-icons/fa";
 import {IoMdArrowDropdown} from "react-icons/io";
 import {RiLockPasswordLine} from "react-icons/ri";
@@ -279,7 +279,6 @@ export default function Navbar() {
                 {
                     authState.currentUser?.accountType === 'employee' && <a>Jobs Following</a>
                 }
-                <a>IT Fresher Jobs <GiGraduateCap/></a>
                 {
                     authState.currentUser?.accountType === 'employee' && <a>Recommended Jobs</a>
                 }

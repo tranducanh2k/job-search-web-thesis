@@ -53,9 +53,7 @@ const employeeSchema = new Schema({
         link: String,
         description: String
     }],
-    cv: {
-        type: String
-    },
+    cv: [String],
     jobsFollowing: [{type: mongoose.ObjectId, ref: "Job"}],
     avatar: {
         type: String
