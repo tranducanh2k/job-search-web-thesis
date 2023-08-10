@@ -6,7 +6,7 @@ import {handleDisplaySalary, getRandomColor} from "../../utils/helper.js";
 export default function JobItem({jobData}) {
     const router = useRouter()
 
-    return <div id='job-item' onClick={() => router.push(`/jobs/${jobData._id}`)}>
+    return <a id='job-item' onClick={() => router.push(`/jobs/${jobData._id}`)}>
         <div>
             <Image 
                 width={133}
@@ -25,7 +25,7 @@ export default function JobItem({jobData}) {
             <div className='job-sub-info'>
                 <div>
                     <span style={{marginRight:'20px'}}><BsFillPinMapFill/>&nbsp;{jobData.companyId.province}</span>
-                    <span><BsClockFill/>&nbsp;{jobData.companyId.fullTime? 'Full time':'Part time'}</span>
+                    <span><BsClockFill/>&nbsp;{jobData.fullTime? 'Full time':'Part time'}</span>
                 </div>
             </div>
             <div>
@@ -44,5 +44,5 @@ export default function JobItem({jobData}) {
                 </div>
             </div>
         </div>
-    </div>
+    </a>
 }

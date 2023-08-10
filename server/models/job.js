@@ -34,8 +34,7 @@ const jobSchema = new Schema({
         enum: [JOB_TYPE.HYBRID, JOB_TYPE.IN_OFFICE, JOB_TYPE.OVERSEA, JOB_TYPE.REMOTE]
     },
     fullTime: {
-        type: Boolean,
-        required: true
+        type: Boolean
     },
     requiredSkill: [{
         type: mongoose.ObjectId,
@@ -46,7 +45,15 @@ const jobSchema = new Schema({
         role: String,
         skillRequired: String,
         benefit: String
+    },
+    searchMetafield: {
+        type: String
     }
+});
+
+jobSchema.index({ 
+    title: 'text',
+    searchMetafield: 'text'
 });
 
 export default mongoose.model('Job', jobSchema);

@@ -7,6 +7,7 @@ import {wrapper} from "../../redux/store.js";
 import { checkCreatedEmployee, logout } from "../../redux/authSlice";
 import cookies from 'next-cookies';
 import { clearCookiesServerSide, getCookiesClientSide } from "../../utils/cookieHandler";
+import ImgCrop from 'antd-img-crop';
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function MyProfile({employeeData}) {
@@ -81,12 +82,14 @@ export default function MyProfile({employeeData}) {
                 name='avatar'
                 label='Avatar'
             >
-                <Upload
-                    name="avatar"
-                    listType="picture-card"
-                >
-                    {uploadAvaButton}
-                </Upload>
+                <ImgCrop rotationSlider>
+                    <Upload
+                        name="avatar"
+                        listType="picture-card"
+                    >
+                        {uploadAvaButton}
+                    </Upload>
+                </ImgCrop>
             </Form.Item>
             <Form.Item
                 name='name'

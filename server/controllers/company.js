@@ -1,5 +1,22 @@
 import {Company} from '../models/index.js'
 
+export async function getById(req, res) {
+    const id = req.params.id;
+
+    try {
+        const company = await Company.findById(id);
+        return res.status(200).json({
+            message: 'get company successfully',
+            company
+        })
+    } catch (err) {
+        console.log(err)
+        return res.status(404).json({
+            message: err
+        })
+    }
+}
+
 export async function createOrUpdateCompany(req, res) {
     const company = req.body;
     try {

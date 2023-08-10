@@ -1,9 +1,9 @@
 export const handleDisplaySalary = (jobData) => {
-    if(!jobData.minSalary) {
+    if(!jobData.minSalary && jobData.maxSalary) {
         return <h4>Up to {jobData.maxSalary} $</h4>
-    } else if(!jobData.maxSalary) {
-        return <h4>Over {jobData.maxSalary} $</h4>
-    } else if(!jobData.maxSalary & !jobData.minSalary) {
+    } else if(!jobData.maxSalary && jobData.minSalary) {
+        return <h4>Over {jobData.minSalary} $</h4>
+    } else if(!jobData.maxSalary && !jobData.minSalary) {
         return <h4>$ Negotiable</h4>
     } else {
         return <h4>{jobData.minSalary} - {jobData.maxSalary} $</h4>

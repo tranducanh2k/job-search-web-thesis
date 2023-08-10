@@ -1,11 +1,32 @@
 import CompanyProfileLayout from "../../../components/company-profile/CompanyProfileLayout.js";
-import { Button, Space, Table, Tag } from "antd";
+import { Button, Popconfirm, Space, Table, Tag, message } from "antd";
 import cookies from "next-cookies";
 import { useRouter } from 'next/router';
 import { getRandomColor } from "../../../utils/helper.js";
+import { getCookiesClientSide } from "../../../utils/cookieHandler.js";
 
 export default function CreateJobs({jobs}) {
     const router = useRouter();
+    const token = getCookiesClientSide('jwt');
+    const [messageApi, contextHolder] = message.useMessage();
+
+    const handleDelete = async (id) => {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/job/delete/${id}`, {
+            method: 'DELETE',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        let result = await response.json();
+        if(response.status === 200) {
+            messageApi.success(result.message);
+            router.push('/company-profile/create-jobs');
+        } else {
+            messageApi.error(result.message);
+        }
+    }
+
     const columns = [
         {
             title: "Job title",
@@ -35,7 +56,15 @@ export default function CreateJobs({jobs}) {
             render: (_, {key}) => (
                 <Space size="middle">
                     <a onClick={()=> router.push(`/company-profile/create-jobs/${key}`)}>Edit</a>
-                    <a>Delete</a>
+                    <Popconfirm
+                        title="Delete this job"
+                        description="Are you sure to delete this job?"
+                        okText="Yes"
+                        cancelText="No"
+                        onConfirm={()=> handleDelete(key)}
+                    >
+                        <a>Delete</a>
+                    </Popconfirm>
                 </Space>
             ),
         },
@@ -50,6 +79,7 @@ export default function CreateJobs({jobs}) {
 
     return (
         <div id="create-jobs">
+            {contextHolder}
             <div>
                 <h2 style={{ marginTop: 0 }}>Create Jobs</h2>
                 <Button 
