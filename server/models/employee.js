@@ -40,20 +40,19 @@ const employeeSchema = new Schema({
     experience: [{
         companyName: String,
         position: String,
-        seniority: Number,
+        seniority: String,
         description: String
     }],
     skill: [String],
     certificate: [{
         certName: String,
-        description: String,
-        image: String
+        description: String
     }],
     product: [{
         link: String,
         description: String
     }],
-    cv: [String],
+    cv: String,
     jobsFollowing: [{type: mongoose.ObjectId, ref: "Job"}],
     avatar: {
         type: String

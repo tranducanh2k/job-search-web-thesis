@@ -1,4 +1,4 @@
-import { Button, Form, Input, InputNumber, Select, Upload, message,Alert, Image, Space } from "antd";
+import { Button, Form, Input, InputNumber, Select, Upload, message,Alert, Image, Space, AutoComplete } from "antd";
 import ProfileLayout from "../../components/profile/ProfileLayout";
 import { PROVINCES } from "../../utils/enum";
 import {AiOutlineUpload,AiOutlinePlus} from "react-icons/ai";
@@ -11,6 +11,7 @@ import { useState } from "react";
 import { checkCreatedEmployee, logout } from "../../redux/authSlice";
 import { storage } from "../../utils/firebase.js";
 import { v4 } from "uuid";
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import {
     ref,
     getDownloadURL,
@@ -18,7 +19,7 @@ import {
 } from "firebase/storage";
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export default function MyProfile({employeeData}) {
+export default function MyProfile({employeeData, certs}) {
     const authState = useSelector((state) => state.auth);
     const dispatch = useDispatch();
     const [messageApi, contextHolder] = message.useMessage();
@@ -52,17 +53,23 @@ export default function MyProfile({employeeData}) {
             },
         },
     };
+    const extractFileName = (urlString) => {
+        const decodedUrl = decodeURIComponent(urlString);
+        const parts = decodedUrl.split('/');
+        const fileNameWithQuery = parts[parts.length - 1];
+        const fileName = fileNameWithQuery.split('?')[0];
+        return fileName;
+    }
+
     const [avatarFileList, setAvatarFileList] = useState();
     const [avaUrl, setAvaUrl] = useState(employeeData.avatar?? 'https://static.vecteezy.com/system/resources/previews/004/141/669/original/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg');
-    const [cvFileList, setCvFileList] = useState();
-    const [cvUrlList, setCvUrlList] = useState(employeeData.cv?? [])
+    const [cvFile, setCvFile] = useState();
     
     const onChangeAvatar = ({ fileList: newFileList }) => {
         setAvatarFileList(newFileList);
     }
     const onChangeCv = (e) => {
-        setCvFileList(e.fileList);
-        console.log(e)
+        setCvFile(e.fileList[0]);
     }
 
     const onFinishForm = async (values) => {
@@ -75,16 +82,18 @@ export default function MyProfile({employeeData}) {
             avatarUrl = await getDownloadURL(snapshot.ref);
             setAvaUrl(avatarUrl);
         }
-        let cvUrlTempList = employeeData.cv;
-        if(cvFileList?.length) {
-            for(let cv of cvFileList) {
-                const cvUpload = cv.originFileObj;
-                const cvRef = ref(storage, `cv/${cvUpload.name}`);
-                let snapshot = await uploadBytesResumable(cvRef, cvUpload);
-                let cvUrl = await getDownloadURL(snapshot.ref);
-                cvUrlTempList.push(cvUrl);
-                setCvUrlList(prev => [...prev, cvUrl]);
-            }
+        let currentCvUrl = employeeData.cv;
+        if(cvFile) {
+            const cvUpload = cvFile.originFileObj;
+            const cvRef = ref(storage, `cv/${cvUpload.name}`);
+            let snapshot = await uploadBytesResumable(cvRef, cvUpload);
+            let cvUrl = await getDownloadURL(snapshot.ref);
+            currentCvUrl = cvUrl;
+            setCvFile(prev => {
+                return {
+                    ...prev, url: cvUrl
+                }
+            });
         }
 
         const response = await fetch(`${API_URL}/employee/create-or-update-employee`, {
@@ -96,7 +105,7 @@ export default function MyProfile({employeeData}) {
             body: JSON.stringify({...values, 
                 accountId: authState.currentUser.accountId, 
                 avatar: avatarUrl,
-                cv: cvUrlTempList
+                cv: currentCvUrl
             })
         })
         const result = await response.json();
@@ -107,6 +116,7 @@ export default function MyProfile({employeeData}) {
             messageApi.error(result.message);
         }
         setLoading(false);
+        // console.log(values)
     }
 
     return <div id="profile">
@@ -197,17 +207,95 @@ export default function MyProfile({employeeData}) {
                     }
                 </Select>
             </Form.Item>
-            <Form.Item
-                name='education'
-                label='Education'
-            >
-
+            <Form.Item label='Education'>
+                <Form.List
+                    name='education'
+                >
+                    {(fields, { add, remove }) => (
+                        <>
+                        {fields.map(({ key, name, ...restField }) => (
+                            <Space
+                                key={key}
+                                style={{
+                                    display: 'flex',
+                                    marginBottom: 8,
+                                }}
+                                align="baseline"
+                            >
+                            <Form.Item
+                                {...restField}
+                                name={[name, 'schoolName']}
+                            >
+                                <Input placeholder="School Name" />
+                            </Form.Item>
+                            <Form.Item
+                                {...restField}
+                                name={[name, 'field']}
+                            >
+                                <Input placeholder="Field" />
+                            </Form.Item>
+                            <MinusCircleOutlined onClick={() => remove(name)} />
+                            </Space>
+                        ))}
+                        <Form.Item>
+                            <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                            Add field
+                            </Button>
+                        </Form.Item>
+                        </>
+                    )}
+                </Form.List>
             </Form.Item>
-            <Form.Item
-                name='experience'
-                label='Experience'
-            >
-
+            <Form.Item label='Experience'>
+                <Form.List
+                    name='experience'
+                >
+                    {(fields, { add, remove }) => (
+                        <>
+                        {fields.map(({ key, name, ...restField }) => (
+                            <Space
+                                key={key}
+                                style={{
+                                    display: 'flex',
+                                    marginBottom: 8,
+                                }}
+                                align="baseline"
+                            >
+                            <Form.Item
+                                {...restField}
+                                name={[name, 'companyName']}
+                            >
+                                <Input placeholder="Company" />
+                            </Form.Item>
+                            <Form.Item
+                                {...restField}
+                                name={[name, 'position']}
+                            >
+                                <Input placeholder="Position" />
+                            </Form.Item>
+                            <Form.Item
+                                {...restField}
+                                name={[name, 'seniority']}
+                            >
+                                <Input placeholder="Seniority" />
+                            </Form.Item>
+                            <Form.Item
+                                {...restField}
+                                name={[name, 'description']}
+                            >
+                                <Input placeholder="Description" />
+                            </Form.Item>
+                            <MinusCircleOutlined onClick={() => remove(name)} />
+                            </Space>
+                        ))}
+                        <Form.Item>
+                            <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                            Add field
+                            </Button>
+                        </Form.Item>
+                        </>
+                    )}
+                </Form.List>
             </Form.Item>
             <Form.Item
                 name='skill'
@@ -220,33 +308,104 @@ export default function MyProfile({employeeData}) {
                     options={[{value:'js', label: 'js'}]}
                 />
             </Form.Item>
-            <Form.Item
-                name='certificate'
-                label='Certificate'
-            >
-
+            <Form.Item label='Certificate'>
+                <Form.List
+                    name='certificate'
+                >
+                    {(fields, { add, remove }) => (
+                        <>
+                        {fields.map(({ key, name, ...restField }) => (
+                            <Space
+                                key={key}
+                                style={{
+                                    display: 'flex',
+                                    marginBottom: 8,
+                                }}
+                                align="baseline"
+                            >
+                            <Form.Item
+                                {...restField}
+                                name={[name, 'certName']}
+                            >
+                                <AutoComplete 
+                                    options={certs.map(i => ({value: i.certName}))}
+                                    filterOption={(inputValue, option) =>
+                                        option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                                    }
+                                >
+                                    <Input placeholder="Input certificate" />
+                                </AutoComplete>
+                            </Form.Item>
+                            <Form.Item
+                                {...restField}
+                                name={[name, 'description']}
+                            >
+                                <Input placeholder="Description" />
+                            </Form.Item>
+                            <MinusCircleOutlined onClick={() => remove(name)} />
+                            </Space>
+                        ))}
+                        <Form.Item>
+                            <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                            Add field
+                            </Button>
+                        </Form.Item>
+                        </>
+                    )}
+                </Form.List>
             </Form.Item>
-            <Form.Item
-                name='product'
-                label='Product'
-            >
-                
+            <Form.Item label='Product'>
+                <Form.List
+                    name='product'
+                >
+                    {(fields, { add, remove }) => (
+                        <>
+                        {fields.map(({ key, name, ...restField }) => (
+                            <Space
+                                key={key}
+                                style={{
+                                    display: 'flex',
+                                    marginBottom: 8,
+                                }}
+                                align="baseline"
+                            >
+                            <Form.Item
+                                {...restField}
+                                name={[name, 'link']}
+                            >
+                                <Input placeholder="Link to project" />
+                            </Form.Item>
+                            <Form.Item
+                                {...restField}
+                                name={[name, 'description']}
+                            >
+                                <Input placeholder="Description" />
+                            </Form.Item>
+                            <MinusCircleOutlined onClick={() => remove(name)} />
+                            </Space>
+                        ))}
+                        <Form.Item>
+                            <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                            Add field
+                            </Button>
+                        </Form.Item>
+                        </>
+                    )}
+                </Form.List>
             </Form.Item>
             <Form.Item
                 label='Your CV'
             >
-                <Upload 
+                <Upload
                     accept="application/pdf"
                     onChange={onChangeCv}
-                    fileList={cvUrlList.map((cv, index) => {
-                        return {
-                            uid: cv,
-                            url: cv,
-                            name: `CV ${index}`,
-                            status: 'done'
-                        }
-                    })}
-                    maxCount={5}
+                    fileList={cvFile? [cvFile] : (employeeData.cv? [{
+                        uid: employeeData.cv,
+                        url: employeeData.cv,
+                        name: extractFileName(employeeData.cv),
+                        status: 'done'
+                    }] : [])}
+                    maxCount={1}
                 >
                     <Button icon={<AiOutlineUpload/>}>Click to Upload</Button>
                 </Upload>
@@ -295,9 +454,18 @@ export const getServerSideProps = wrapper.getServerSideProps(store => async ({re
         employeeData = result.employee;
     }
 
+    const responseCert = await fetch(`${API_URL}/cert`, {
+        method: 'GET',
+        headers: { 
+            'Content-Type': 'application/json',
+        }
+    });
+    const resultCert = await responseCert.json();
+
     return {
         props: {
-            employeeData
+            employeeData,
+            certs: resultCert.certs
         }
     }
 })
