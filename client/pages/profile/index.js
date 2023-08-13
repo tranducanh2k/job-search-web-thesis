@@ -1,4 +1,4 @@
-import { Button, Form, Input, InputNumber, Select, Upload, message,Alert, Image, Space, AutoComplete } from "antd";
+import { Button, Form, Input, InputNumber, Select, Upload, message,Alert, Image, Space, AutoComplete, Modal } from "antd";
 import ProfileLayout from "../../components/profile/ProfileLayout";
 import { PROVINCES } from "../../utils/enum";
 import {AiOutlineUpload,AiOutlinePlus} from "react-icons/ai";
@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {wrapper} from "../../redux/store.js";
 import cookies from 'next-cookies';
 import { clearCookiesServerSide, getCookiesClientSide } from "../../utils/cookieHandler";
+import { extractFileName } from "../../utils/helper.js";
 import ImgCrop from 'antd-img-crop';
 import { useState } from "react";
 import { checkCreatedEmployee, logout } from "../../redux/authSlice";
@@ -19,7 +20,7 @@ import {
 } from "firebase/storage";
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export default function MyProfile({employeeData, certs}) {
+export default function MyProfile({employeeData, certs, skills}) {
     const authState = useSelector((state) => state.auth);
     const dispatch = useDispatch();
     const [messageApi, contextHolder] = message.useMessage();
@@ -53,13 +54,6 @@ export default function MyProfile({employeeData, certs}) {
             },
         },
     };
-    const extractFileName = (urlString) => {
-        const decodedUrl = decodeURIComponent(urlString);
-        const parts = decodedUrl.split('/');
-        const fileNameWithQuery = parts[parts.length - 1];
-        const fileName = fileNameWithQuery.split('?')[0];
-        return fileName;
-    }
 
     const [avatarFileList, setAvatarFileList] = useState();
     const [avaUrl, setAvaUrl] = useState(employeeData.avatar?? 'https://static.vecteezy.com/system/resources/previews/004/141/669/original/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg');
@@ -85,7 +79,7 @@ export default function MyProfile({employeeData, certs}) {
         let currentCvUrl = employeeData.cv;
         if(cvFile) {
             const cvUpload = cvFile.originFileObj;
-            const cvRef = ref(storage, `cv/${cvUpload.name}`);
+            const cvRef = ref(storage, `cv/${cvUpload.name + '?' + v4()}`);
             let snapshot = await uploadBytesResumable(cvRef, cvUpload);
             let cvUrl = await getDownloadURL(snapshot.ref);
             currentCvUrl = cvUrl;
@@ -116,7 +110,6 @@ export default function MyProfile({employeeData, certs}) {
             messageApi.error(result.message);
         }
         setLoading(false);
-        // console.log(values)
     }
 
     return <div id="profile">
@@ -301,12 +294,13 @@ export default function MyProfile({employeeData, certs}) {
                 name='skill'
                 label='Skill'
             >
-                <Select
-                    mode="multiple"
-                    allowClear
-                    placeholder="Select your tech skills"
-                    options={[{value:'js', label: 'js'}]}
-                />
+                <Select placeholder='select your skills' mode="multiple">
+                    {
+                        skills.map(p => {
+                            return <Option value={p._id}>{p.skillName}</Option>
+                        })
+                    }
+                </Select>
             </Form.Item>
             <Form.Item label='Certificate'>
                 <Form.List
@@ -372,6 +366,7 @@ export default function MyProfile({employeeData, certs}) {
                             <Form.Item
                                 {...restField}
                                 name={[name, 'link']}
+                                rules={[{type: 'url', warningOnly: true}]}
                             >
                                 <Input placeholder="Link to project" />
                             </Form.Item>
@@ -462,10 +457,16 @@ export const getServerSideProps = wrapper.getServerSideProps(store => async ({re
     });
     const resultCert = await responseCert.json();
 
+    const responseSkill = await fetch(`${API_URL}/skill`, {
+        method: 'GET'
+    })
+    const resultSkill = await responseSkill.json();
+
     return {
         props: {
             employeeData,
-            certs: resultCert.certs
+            certs: resultCert.certs,
+            skills: resultSkill.skills
         }
     }
 })

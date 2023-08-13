@@ -101,7 +101,13 @@ export async function getInterviewById(req, res) {
         let interview = await Interview.findById(id)
                                         .populate("employeeId")
                                         .populate("companyId")
-                                        .populate("acceptedJobsList");
+                                        // .populate("acceptedJobsList")
+                                        .populate({
+                                            path: 'acceptedJobsList',
+                                            populate: {
+                                                path: 'requiredSkill'
+                                            }
+                                        });
         let messages = await ChatMessage.find({interviewId: interview._id})
                                         .sort({timestamp: 1});
         return res.status(200).json({

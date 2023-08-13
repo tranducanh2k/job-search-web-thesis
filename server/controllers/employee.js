@@ -1,11 +1,39 @@
 import { Employee } from "../models/index.js"
 
+export const getAll = async (req, res) => {
+
+    try {
+        const employeeList = await Employee.find({}).populate('skill');
+        return res.status(200).json({
+            message: 'Get all employee successfully',
+            employeeList
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(404).json({
+            message: error
+        })
+    }
+}
+
 //[GET] /employee/get-by-account-id
-export const getById = async (req, res) => {
+export const getByAccountId = async (req, res) => {
     const accountId = req.query.id;
 
     try {
-        const employee = await Employee.findOne({accountId});
+        const employee = await Employee.findOne({accountId})
+                                        .populate({
+                                            path: 'jobsFollowing',
+                                            populate: {
+                                                path: 'requiredSkill',
+                                            }
+                                        })
+                                        .populate({
+                                            path: 'jobsFollowing',
+                                            populate: {
+                                                path: 'companyId'
+                                            }
+                                        })
         return res.status(200).json({
             message: 'Get employee info by account id successfully',
             employee: employee
@@ -49,6 +77,37 @@ export const createOrUpdateEmployee = async (req, res) => {
                 })
             }
         }
+    } catch (error) {
+        console.log(error);
+        res.status(404).json({
+            message: error
+        })
+    }
+}
+
+//[GET] /employee/get-by-employee-id
+export const getByEmployeeId = async (req, res) => {
+    const employeeId = req.params.id;
+
+    try {
+        const employee = await Employee.findById(employeeId)
+                                        .populate('skill')
+                                        .populate({
+                                            path: 'jobsFollowing',
+                                            populate: {
+                                                path: 'requiredSkill',
+                                            }
+                                        })
+                                        .populate({
+                                            path: 'jobsFollowing',
+                                            populate: {
+                                                path: 'companyId'
+                                            }
+                                        })
+        return res.status(200).json({
+            message: 'Get employee successfully',
+            employee: employee
+        });
     } catch (error) {
         console.log(error);
         res.status(404).json({

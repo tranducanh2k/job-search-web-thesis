@@ -6,7 +6,7 @@ const interviewInvitationSchema = new Schema({
     jobId: {
         type: mongoose.ObjectId,
         required: true,
-        ref: "Account"
+        ref: "Job"
     },
     employeeId: {
         type: mongoose.ObjectId,

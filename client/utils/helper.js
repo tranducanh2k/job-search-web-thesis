@@ -38,3 +38,11 @@ export function formatDate(date) {
     let dateString = d.toLocaleString()
     return dateString
 }
+
+export const extractFileName = (urlString) => {
+    const decodedUrl = decodeURIComponent(urlString);
+    const parts = decodedUrl.split('/');
+    const fileNameWithQuery = parts[parts.length - 1];
+    const fileName = fileNameWithQuery.split('?')[0];
+    return fileName;
+}

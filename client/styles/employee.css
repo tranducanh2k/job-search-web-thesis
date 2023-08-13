@@ -1,0 +1,134 @@
+#jobs.employee .main-search {
+    padding: 20px 9vw;
+    background-image: url('../public/images/employee-search.jpg');
+    background-size: cover;
+    background-position: top;
+}
+#jobs.employee .search-result {
+    column-gap: 40px;
+}
+#jobs.employee .employee-result {
+    display: grid;
+    grid-template-columns: repeat(3, 30%);
+    grid-auto-rows: 370px;
+    flex: 1;
+    gap: 20px;
+}
+
+#employee-item {
+    border-radius: 6px;
+    padding: 20px;
+    border: 1px solid #ebebeb;
+    box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.08);
+    height: 350px;
+    cursor: pointer;
+}
+#employee-item:hover {
+    box-shadow: none;
+    background-color: #f3f5f7;
+}
+#employee-item:hover .name {
+    color: #1677ff;
+}
+#employee-item > div:nth-child(1) {
+    display: flex;
+    justify-content: center;
+}
+#employee-item .name {
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: 500;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+#employee-item .subinfo {
+    color: #6f7882!important;
+    margin: 5px;
+}
+#employee-item svg {
+    margin-right: 10px;
+}
+#employee-item .tech {
+    margin-top: 15px;
+}
+
+#employee-detail {
+    background-color: #f0f0f0;
+    padding: 20px 9vw;
+    display: flex;
+    flex-direction: row;
+    column-gap: 20px;
+}
+#employee-detail .panel {
+    box-shadow: -1px 1px 6px rgba(0,0,0,.05);
+    border-radius: 6px;
+    background-color: white;
+    height: fit-content;
+    padding: 20px;
+}
+#employee-detail h4 {
+    margin-top: 0;
+}
+#employee-detail .employee-info {
+    width: 62vw;
+}
+#employee-detail .sub-info {
+    background-color: white;
+    flex: 1;
+    border-radius: 6px;
+    height: fit-content;
+}
+#employee-detail .employee-info .first {
+    display: flex;
+    flex-direction: row;
+    column-gap: 30px;
+    margin-bottom: 20px;
+}
+#employee-detail .employee-info .first .employee-name {
+    color: #1677ff;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 50px;
+}
+#employee-detail .employee-info .first .employee-gender {
+    font-size: 16px;
+    font-weight: 500;
+    color: #212f3f;
+}
+#employee-detail .expertise-info {
+    display: flex;
+    column-gap: 20px;
+}
+#employee-detail .expertise-info > div {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
+}
+#employee-detail .sub-info {
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
+    padding: 30px 20px 30px 20px;
+    align-items: center;
+}
+
+.ant-modal-content:has(#invite-modal) .ant-modal-title {
+    font-size: 1.3rem;
+}
+#invite-modal {
+    display: flex;
+    column-gap: 20px;
+    margin-bottom: 40px;
+}
+#invite-modal > div {
+    flex: 1 ;
+}
+#invite-modal header {
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+#invite-modal .job-list {
+    overflow: auto;
+    height: 280px;
+}

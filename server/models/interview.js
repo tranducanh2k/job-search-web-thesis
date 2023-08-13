@@ -17,8 +17,11 @@ const interviewSchema = new Schema({
         ref: "Job"
     }],
     interviewDate: {
-        type: Date
+        type: String
     },
+    note: {
+        type: String
+    }
 });
 
 export default mongoose.model('Interview', interviewSchema);

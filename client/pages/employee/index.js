@@ -3,21 +3,19 @@ import {FiFilter} from 'react-icons/fi';
 const { Search } = Input;
 import { useRouter } from 'next/router';
 import { wrapper } from '../../redux/store.js';
-import JobItem from '../../components/jobs/JobItem.js';
 import { useEffect, useState } from 'react';
 import { JOB_LEVEL, JOB_TYPE,PROVINCES,INDUSTRY,COUNTRY } from "../../utils/enum.js";
+import EmployeeItem from '../../components/employee/EmployeeItem.js';
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export default function Jobs(props) {
+export default function Employee(props) {
     const [form] = Form.useForm();
     const router = useRouter();
-    const pageSize = 8;
-    const [jobsList, setJobsList] = useState(props.jobsList);
+    const pageSize = 9;
+    const [employeeList, setEmployeeList] = useState(props.employeeList);
     const [curPage, setCurPage] = useState(1);
-    const [curJobs, setCurJobs] = useState([]);
+    const [curEmployees, setCurEmployees] = useState([]);
     const [loading, setLoading] = useState(false);
-    const experienceFilter = ['Under 6 months', '6 - 12 months', '1 - 3 years', '3 - 6 years', 'Over 6 years'];
-    const salaryFilter = ['Negotiable','Under 500$', '500$ - 1000$', '1000$ - 3000$', '3000$ - 5000$', 'Over 5000$'];
 
     const handleJumpPage = (pageNumber) => {
         setCurPage(pageNumber);
@@ -115,11 +113,11 @@ export default function Jobs(props) {
     } 
 
     useEffect(() => {
-        setCurJobs(jobsList.slice((curPage-1) * pageSize, curPage * pageSize));
-    }, [curPage, jobsList]);
+        setCurEmployees(employeeList.slice((curPage-1) * pageSize, curPage * pageSize));
+    }, [curPage, employeeList]);
 
-    return <div id='jobs'>
-        <div className='main-search' >
+    return <div id='jobs' className='employee'>
+        <div className='main-search'>
             <Search
                 placeholder="Search by job, company, tech stack, ..."
                 allowClear
@@ -141,24 +139,6 @@ export default function Jobs(props) {
                         onFinish={onFinish}
                         layout="vertical"
                     >
-                        <Form.Item name='salary' label='Salary'>
-                            <Select placeholder='Select salary' allowClear>
-                                {
-                                    salaryFilter.map(i => {
-                                        return <Option value={i}>{i}</Option>
-                                    })
-                                }
-                            </Select>
-                        </Form.Item>
-                        <Form.Item name='experience' label='Experience'>
-                            <Select placeholder='Select experience' allowClear>
-                                {
-                                    experienceFilter.map(i => {
-                                        return <Option value={i}>{i}</Option>
-                                    })
-                                }
-                            </Select>
-                        </Form.Item>
                         <Form.Item name='jobLevel' label='Job Level'>
                             <Select placeholder='Select job level' allowClear>
                                 {
@@ -227,20 +207,18 @@ export default function Jobs(props) {
                         <Skeleton active />
                     </div>
                     :
-                    <div className='jobs-result'>
+                    <div className='employee-result'>
                         {
-                            !jobsList.length ? <h2>0 search result</h2> :
-                            curJobs.map(job => <JobItem jobData={job} />)
+                            !employeeList.length ? <h2>0 search result</h2> :
+                            employeeList.map(job => <EmployeeItem employeeData={job} />)
                         }
-                        <br/>
                         <Pagination 
                             showQuickJumper
-                            total={jobsList.length}
+                            total={employeeList.length}
                             pageSize={pageSize}
                             current={curPage}
                             onChange={handleJumpPage}
                         />
-                        <br/><br/>
                     </div>
                 }
             </div>
@@ -249,7 +227,7 @@ export default function Jobs(props) {
 }
 
 export const getServerSideProps =  wrapper.getServerSideProps(store => async (ctx) => {
-    const response = await fetch(`${API_URL}/job/get-all`, {
+    const response = await fetch(`${API_URL}/employee`, {
         method: 'GET',
         headers: {'Content-Type': 'application/json'}
     });
@@ -257,7 +235,7 @@ export const getServerSideProps =  wrapper.getServerSideProps(store => async (ct
 
     return {
         props: {
-            jobsList: result.jobs
+            employeeList: result.employeeList
         }
     }
 })

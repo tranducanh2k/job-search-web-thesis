@@ -32,7 +32,11 @@ export default function CompanyProfileLayout({children}) {
             >
                 <AiOutlineForm/>Employee Applications
             </div>
-            <div>
+            <div
+                className='emp-application'
+                onClick={() => router.push('/company-profile/job-invitation')}
+                style={router.pathname==='/company-profile/job-invitation'? {backgroundColor:'#e5f2fb'} : {}}
+            >
                 <BiMailSend/>Job Invitations
             </div>
             <div>

@@ -7,6 +7,7 @@ import '../styles/companies.css';
 import '../styles/jobs.css';
 import '../styles/signup.css';
 import '../styles/chat.css';
+import '../styles/employee.css';
 import { wrapper } from '../redux/store.js';
 import { PersistGate } from 'redux-persist/integration/react';
 import { useStore } from 'react-redux';

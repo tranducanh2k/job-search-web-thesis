@@ -23,7 +23,8 @@ export const getApplicationbyCompany = async (req, res) => {
     try {
         const applications = await Application.find({ companyId: id })
                                                 .populate('jobId')
-                                                .populate('employeeId');
+                                                .populate('employeeId')
+                                                .populate('companyId');
         return res.status(200).json({
             message: "Get applications successfully",
             applications

@@ -1,6 +1,6 @@
-import { Form, Input, Select, message } from "antd";
-import { COUNTRY, INDUSTRY, PROVINCES } from "../utils/enum";
-import { COMPANY_SIZE } from "../../server/utils/enum";
+import { Form, Input, Select, message, Button, Space} from "antd";
+import { COUNTRY, INDUSTRY, PROVINCES, COMPANY_SIZE } from "../utils/enum";
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 const {TextArea} = Input;
 
 export default function SignUp(props) {
@@ -89,8 +89,44 @@ export default function SignUp(props) {
                 <Form.Item name='website' label='Website'>
                     <Input size="large" />
                 </Form.Item>
-                <Form.Item name='address' label='Address'>
-                    
+                <Form.Item label='Address'>
+                    <Form.List
+                        name='address'
+                    >
+                        {(fields, { add, remove }) => (
+                            <>
+                            {fields.map((field, index) => (
+                                <Form.Item
+                                    key={field.key}
+                                >
+                                    <Form.Item
+                                        {...field}
+                                        noStyle
+                                    >
+                                        <Input
+                                            placeholder="address"
+                                            style={{
+                                                width: '90%',
+                                                marginRight: '10px'
+                                            }}
+                                        />
+                                    </Form.Item>
+                                    {fields.length > 1 ? (
+                                        <MinusCircleOutlined
+                                            className="dynamic-delete-button"
+                                            onClick={() => remove(field.name)}
+                                        />
+                                    ) : null}
+                                </Form.Item>
+                            ))}
+                            <Form.Item>
+                                <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                                Add field
+                                </Button>
+                            </Form.Item>
+                            </>
+                        )}
+                    </Form.List>
                 </Form.Item>
                 <Form.Item name='province' label='Province' rules={[{required: true}]}>
                     <Select placeholder='Select province' size="large">

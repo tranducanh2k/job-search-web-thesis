@@ -7,7 +7,7 @@ const employeeSchema = new Schema({
         required: true,
         ref: "Account"
     },
-    name: {
+    name: { //
         type: String,
         required: true
     },
@@ -23,7 +23,7 @@ const employeeSchema = new Schema({
         type: Number,
         required: true
     },
-    gender: {
+    gender: { //
         type: String,
         enum: ['male', 'female']
     },
@@ -43,7 +43,10 @@ const employeeSchema = new Schema({
         seniority: String,
         description: String
     }],
-    skill: [String],
+    skill: [{
+        type: mongoose.ObjectId,
+        ref: "Skill"
+    }],
     certificate: [{
         certName: String,
         description: String

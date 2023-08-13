@@ -1,22 +1,66 @@
 import {useRouter} from 'next/router';
-import {Button, Divider, Image, Input, Modal, Space, Tag, Upload, message} from 'antd';
+import {Button, Divider, Image, Input, Modal, Radio, Space, Tag, Upload, message} from 'antd';
 import {getExperience, getRandomColor, handleDisplaySalary} from "../../utils/helper.js";
 import { getCookiesClientSide } from "../../utils/cookieHandler";
 import { useState } from 'react';
 import {AiOutlineUpload} from 'react-icons/ai'
 import { useSelector } from 'react-redux';
+import cookies from 'next-cookies';
+import { storage } from "../../utils/firebase.js";
+import { v4 } from "uuid";
+import {
+    ref,
+    getDownloadURL,
+    uploadBytesResumable,
+} from "firebase/storage";
 const {TextArea} = Input;
 
-export default function JobDetail({job}) {
+export default function JobDetail({job, employee}) {
     const router = useRouter();
+    const id = router.query.id;
     const accountType = useSelector((state) => state.auth.currentUser?.accountType);
     const employeeId = useSelector((state) => state.auth.currentUser?.employeeId);
+    const accountId = useSelector((state) => state.auth.currentUser?.accountId);
     const [messageApi, contextHolder] = message.useMessage();
     const [showModal, setShowModal] = useState(false);
     const [coverLetter, setCoverLetter] = useState('');
     const [modalLoading, setModalLoading] = useState(false);
     const [checkCoverLetter, setCheckCoverLetter] = useState('');
     const token = getCookiesClientSide('jwt');
+    const [showUnfollowBtn, setShowUnfollowBtn] = useState(employee?.jobsFollowing && (employee.jobsFollowing.findIndex(job => job._id === id) != -1));
+    const [cvChoice, setCvChoice] = useState(0);
+    const [cvFile, setCvFile] = useState();
+
+    const handleFollowJob = async () => {
+        let jobsFollowing = employee.jobsFollowing?? [];
+        if(!showUnfollowBtn) {
+            jobsFollowing.push(id);
+            setShowUnfollowBtn(true);
+        } else {
+            let index = jobsFollowing.indexOf(id);
+            jobsFollowing.splice(index, 1);
+            setShowUnfollowBtn(false);
+        }
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/employee/create-or-update-employee`, {
+            method: "POST",
+            headers: {
+                'Content-Type':'application/json ',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                accountId: accountId,
+                jobsFollowing: jobsFollowing
+            })
+        })
+        if(response.status == 200) {
+            messageApi.success('Update jobs following successfully');
+        } else {
+            messageApi.error('Update jobs following failed');
+        }
+    }
+    const onChangeCv = (e) => {
+        setCvFile(e.fileList[0]);
+    }
 
     const handleOk = async () => {
         setModalLoading(true);
@@ -29,6 +73,24 @@ export default function JobDetail({job}) {
             setCheckCoverLetter('');
         }
         if(employeeId) {
+            let currentCvUrl = '';
+            if(cvChoice == 0) {
+                currentCvUrl = employee.cv;
+            } else {
+                if(cvFile) {
+                    const cvUpload = cvFile.originFileObj;
+                    const cvRef = ref(storage, `cv/${cvUpload.name + '?' + v4()}`);
+                    let snapshot = await uploadBytesResumable(cvRef, cvUpload);
+                    let cvUrl = await getDownloadURL(snapshot.ref);
+                    currentCvUrl = cvUrl;
+                    setCvFile(prev => {
+                        return {
+                            ...prev, url: cvUrl
+                        }
+                    });
+                }
+            }
+
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/application/create`, {
                 method: "POST",
                 headers: {
@@ -39,7 +101,7 @@ export default function JobDetail({job}) {
                     employeeId: employeeId,
                     jobId: job._id,
                     companyId: job.companyId._id,
-                    cv: '',
+                    cv: currentCvUrl,
                     coverLetter: coverLetter
                 })
             })
@@ -72,9 +134,22 @@ export default function JobDetail({job}) {
             <div id='application-modal'>
                 <div>
                     <span>Your CV</span>
-                    <Upload accept="application/pdf">
-                        <Button icon={<AiOutlineUpload/>}>Click to Upload</Button>
-                    </Upload>
+                    <Radio.Group onChange={(e)=> setCvChoice(e.target.value)} value={cvChoice}>
+                        <Space direction='vertical'>
+                            <Radio value={0}>Use your CV in profile</Radio>
+                            <Radio value={1}>Upload new CV</Radio>
+                            {
+                                cvChoice == 1 && <Upload
+                                    accept="application/pdf"
+                                    onChange={onChangeCv}
+                                    fileList={cvFile? [cvFile] : []}
+                                    maxCount={1}
+                                >
+                                    <Button icon={<AiOutlineUpload/>}>Click to Upload</Button>
+                                </Upload>
+                            }
+                        </Space>
+                    </Radio.Group>
                 </div>
                 <div>
                     <span>
@@ -104,8 +179,8 @@ export default function JobDetail({job}) {
                         <Image 
                             width={200}
                             height={100}
-                            style={{border:'1px solid #d4d4d4', borderRadius:'6px', objectFit: 'cover'}}
-                            src='error'
+                            style={{border:'1px solid #d4d4d4', borderRadius:'6px', objectFit: 'contain'}}
+                            src={job.companyId.image}
                             fallback="https://static.vecteezy.com/system/resources/previews/004/141/669/original/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg"        
                         />
                     </div>
@@ -135,7 +210,11 @@ export default function JobDetail({job}) {
                             <>
                                 <Button type='primary' onClick={() => setShowModal(true)}>Apply Now</Button><br/>
                                 <span>or</span><br/>
-                                <Button>Follow Job</Button>
+                                {
+                                    showUnfollowBtn? 
+                                    <Button danger onClick={() => handleFollowJob()}>Unfollow Job</Button> :
+                                    <Button onClick={() => handleFollowJob()}>Follow Job</Button>
+                                }
                             </>
                         }
                         <div>
@@ -213,14 +292,21 @@ export default function JobDetail({job}) {
 }
 
 export const getServerSideProps = async (ctx) => {
+    let allCookies = cookies({req: ctx.req});
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/job/get-by-id/${ctx.params.id}`, {
         method: 'GET'
     })
     const result = await response.json()
 
+    const responseEmp = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/employee/get-by-id?id=${allCookies.accountId}`, {
+        method: 'GET'
+    })
+    const resultEmp = await responseEmp.json()
+    
     return {
         props: {
-            job: result.job
+            job: result.job,
+            employee: resultEmp.employee
         }
     }
 }

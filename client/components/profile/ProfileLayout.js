@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import {ImProfile,ImHeart} from 'react-icons/im';
 import {BsFillBriefcaseFill,BsChatText} from 'react-icons/bs';
-import {BiLogOut} from 'react-icons/bi';
+import {BiLogOut,BiMailSend} from 'react-icons/bi';
 import { useDispatch } from 'react-redux';
 import { logout } from '../../redux/authSlice';
 import {clearCookies} from '../../utils/cookieHandler.js';
@@ -24,7 +24,16 @@ export default function ProfileLayout({children}) {
             >
                 <BsFillBriefcaseFill/>Jobs Applied
             </div>
-            <div >
+            <div
+                onClick={() => router.push('/profile/job-invitation')}
+                style={router.pathname==='/profile/job-invitation'? {backgroundColor:'#e5f2fb'} : {}}
+            >
+                <BiMailSend/>Job Invitations
+            </div>
+            <div
+                onClick={() => router.push('/profile/job-following')}
+                style={router.pathname==='/profile/job-following'? {backgroundColor:'#e5f2fb'} : {}}
+            >
                 <ImHeart/>Jobs Following
             </div>
             <div>

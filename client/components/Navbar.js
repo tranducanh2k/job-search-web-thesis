@@ -53,8 +53,8 @@ export default function Navbar() {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => {
-                        dispatch(logout());
                         router.push('/');
+                        dispatch(logout());
                         clearCookies();
                         messageApi.open({
                             type: 'success',
@@ -272,12 +272,14 @@ export default function Navbar() {
             <div>
                 <GiHamburgerMenu/>
                 {
-                    authState.currentUser?.accountType === 'company' && <a>Find Employee</a>
+                    authState.currentUser?.accountType === 'company' && 
+                    <a onClick={() => router.push('/employee')}>Find Employee</a>
                 }
                 <a onClick={() => router.push('/jobs')}>IT Jobs</a>
                 <a onClick={() => router.push('/companies')}>IT Companies</a>
                 {
-                    authState.currentUser?.accountType === 'employee' && <a>Jobs Following</a>
+                    authState.currentUser?.accountType === 'employee' && 
+                    <a onClick={() => router.push('/profile/job-following')}>Jobs Following</a>
                 }
                 {
                     authState.currentUser?.accountType === 'employee' && <a>Recommended Jobs</a>

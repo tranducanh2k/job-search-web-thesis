@@ -1,16 +1,20 @@
 import cookies from "next-cookies";
-import { Image, Tag, Button, message } from 'antd';
+import { Image, Tag, Button, message, Modal, Input, Divider } from 'antd';
 import CompanyProfileLayout from '../../components/company-profile/CompanyProfileLayout.js'
 import { useRouter } from 'next/router';
 import {handleDisplaySalary, formatDate} from "../../utils/helper.js";
 import { getCookiesClientSide } from "../../utils/cookieHandler";
 import { useState } from "react";
+import { extractFileName } from "../../utils/helper.js";
+const {TextArea} = Input;
 
 export default function EmployeeApplications(props) {
     const router = useRouter();
     const token = getCookiesClientSide('jwt');
     const [messageApi, contextHolder] = message.useMessage();
     const [applications, setApplications] = useState(props.applications)
+    const [showAppModal, setShowAppModal] = useState(false);
+    const [modalInfo, setModalInfo] = useState({});
     
     const handleAcceptApp = async (id, status, employeeId, companyId, jobId) => {
         let response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/application/update/${id}`, {
@@ -34,12 +38,22 @@ export default function EmployeeApplications(props) {
             });
             
             if(status === 'accepted') {
-                let acceptedJobsList = [jobId];
-                applications.forEach(app => {
-                    if(app.status === 'accepted') {
-                        acceptedJobsList.push(app.jobId._id);
-                    }
-                })
+                let responseChat = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/get-by-company-employee`, {
+                    method: "POST",
+                    headers: {
+                        'Content-Type':'application/json ',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ employeeId, companyId })
+                });
+                let resultChat = await responseChat.json();
+                let acceptedJobsList = [];
+                if(responseChat.status == 200) {
+                    acceptedJobsList = resultChat.interview.acceptedJobsList;
+                }
+                acceptedJobsList.push(jobId);
+                acceptedJobsList = acceptedJobsList.filter((item, index) => acceptedJobsList.indexOf(item) === index);
+
                 let response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/create-or-update`, {
                     method: "POST",
                     headers: {
@@ -54,6 +68,7 @@ export default function EmployeeApplications(props) {
                     messageApi.error('Create interview failed');
                 }
             }
+            router.push('/company-profile/employee-applications')
         } else {
             messageApi.error('Update failed');
         }
@@ -77,6 +92,36 @@ export default function EmployeeApplications(props) {
     }
 
     return <div id="employee-applications">
+        {
+            <Modal
+                title={`Your Application for ${modalInfo.title}`}
+                open={showAppModal}
+                onOk={()=> setShowAppModal(false)}
+                onCancel={()=> setShowAppModal(false)}
+                width={700}
+            >
+                <Divider style={{border:'1px solid #a3a3a2'}}/>
+                <div id='application-modal'>
+                    <div>
+                        <span>Your CV</span>
+                        {
+                            modalInfo.cv? <a target="_blank" href={modalInfo.cv}>{extractFileName(modalInfo.cv)}</a> :
+                            <span>No CV</span>
+                        }
+                    </div>
+                    <div>
+                        <span>
+                            Your cover letter or portfolio link
+                            <span style={{color:'red'}}> *</span>    
+                        </span>
+                        <TextArea
+                            readOnly
+                            value={modalInfo.coverLetter}
+                        />
+                    </div>
+                </div>
+            </Modal>
+        }
         {contextHolder}
         <h2 style={{marginTop:0}}>Employee Applications</h2>
         {
@@ -90,7 +135,7 @@ export default function EmployeeApplications(props) {
                             width={100}
                             height={100}
                             style={{border:'1px solid #d4d4d4', borderRadius:'6px'}}
-                            src='error'
+                            src={app.companyId.image}
                             fallback="https://static.vecteezy.com/system/resources/previews/004/141/669/original/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg"
                         />
                     </div>
@@ -123,7 +168,19 @@ export default function EmployeeApplications(props) {
                                 </div>
                             }
                             <div>
-                                <Button type='primary'>View CV</Button>
+                                <Button 
+                                    type='primary'
+                                    onClick={()=> {
+                                        setShowAppModal(true);
+                                        setModalInfo({
+                                            cv: app.cv,
+                                            coverLetter: app.coverLetter,
+                                            title: app.jobId.title
+                                        })
+                                    }}
+                                >
+                                    View CV
+                                </Button>
                                 <span>&nbsp;&nbsp;&nbsp;</span>
                                 {
                                     app.status === 'accepted' && 
