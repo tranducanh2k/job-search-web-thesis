@@ -1,12 +1,12 @@
-import { Image, Tag } from "antd";
+import { Button, Image, Tag } from "antd";
 import { useRouter } from "next/router"
 import { getRandomColor} from "../../utils/helper.js";
 import {BsHeart,BsClockFill,BsFillPinMapFill,BsGenderAmbiguous} from "react-icons/bs";
 
-export default function EmployeeItem({employeeData}) {
+export default function EmployeeItem({employeeData, isFollowingPage, handleUnfollow}) {
     const router = useRouter();
 
-    return <div id="employee-item" onClick={()=> router.push(`/employee/${employeeData._id}`)}>
+    return <div id="employee-item" >
         <div>
             <Image 
                 width={110}
@@ -17,7 +17,7 @@ export default function EmployeeItem({employeeData}) {
             />
         </div>
         <div>
-            <div className="name">{employeeData.name}</div>
+            <div className="name" onClick={()=> router.push(`/employee/${employeeData._id}`)}>{employeeData.name}</div>
             <div className="subinfo"><BsClockFill/>Age: {employeeData.age}</div>
             <div className="subinfo"><BsGenderAmbiguous/>{employeeData.gender}</div>
             <div className="subinfo"><BsFillPinMapFill/>{employeeData.province}</div>
@@ -27,6 +27,12 @@ export default function EmployeeItem({employeeData}) {
                     return <Tag color={color}>{i.skillName}</Tag>
                 })
             }</div>
+            {
+                isFollowingPage && 
+                <Button style={{marginTop:'10px'}} danger size="large"
+                    onClick={()=> handleUnfollow(employeeData._id)}
+                >Unfollow</Button>
+            }
         </div>
     </div>
 }

@@ -39,6 +39,13 @@ export default function CompanyProfileLayout({children}) {
             >
                 <BiMailSend/>Job Invitations
             </div>
+            <div
+                className='emp-application'
+                onClick={() => router.push('/company-profile/candidates-following')}
+                style={router.pathname==='/company-profile/candidates-following'? {backgroundColor:'#e5f2fb'} : {}}
+            >
+                <ImHeart/>Candidates Following
+            </div>
             <div>
                 <BsChatText/>Chat Rooms
             </div>

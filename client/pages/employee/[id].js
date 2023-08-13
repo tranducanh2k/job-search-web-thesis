@@ -10,7 +10,7 @@ import {GrCertificate} from 'react-icons/gr'
 import {ImProfile} from 'react-icons/im'
 const {TextArea} = Input;
 
-export default function EmployeeDetail({employee, jobs}) {
+export default function EmployeeDetail({employee, jobs, company}) {
     const router = useRouter();
     const id = router.query.id;
     const [messageApi, contextHolder] = message.useMessage();
@@ -20,6 +20,36 @@ export default function EmployeeDetail({employee, jobs}) {
     const [jobChoice, setJobChoice] = useState(jobs[0]._id);
     const token = getCookiesClientSide('jwt');
     const companyId = getCookiesClientSide('companyId');
+    const accountId = getCookiesClientSide('accountId');
+    const [showUnfollowBtn, setShowUnfollowBtn] = useState(company?.candidatesFollowing && (company?.candidatesFollowing.findIndex(i => i._id === id) != -1));
+console.log(showUnfollowBtn)
+    const handleFollowJob = async () => {
+        let candidatesFollowing = company.candidatesFollowing?? [];
+        if(!showUnfollowBtn) {
+            candidatesFollowing.push(id);
+            setShowUnfollowBtn(true);
+        } else {
+            let index = candidatesFollowing.indexOf(id);
+            candidatesFollowing.splice(index, 1);
+            setShowUnfollowBtn(false);
+        }
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/company/create-or-update-company`, {
+            method: "POST",
+            headers: {
+                'Content-Type':'application/json ',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                accountId: accountId,
+                candidatesFollowing: candidatesFollowing
+            })
+        })
+        if(response.status == 200) {
+            messageApi.success('Update employees following successfully');
+        } else {
+            messageApi.error('Update employees following failed');
+        }
+    }
 
     const handleOk = async () => {
         setModalLoading(true);
@@ -230,7 +260,11 @@ export default function EmployeeDetail({employee, jobs}) {
             <Button type='primary' size='large' block
                 onClick={()=> setShowModal(true)}
             >Invite to Interview</Button>
-            <Button size='large' block>Follow</Button>
+            {
+                showUnfollowBtn? 
+                <Button size='large' block danger onClick={()=> handleFollowJob()}>Unfollow</Button> :
+                <Button size='large' block onClick={()=> handleFollowJob()}>Follow</Button>
+            }
         </div>
     </div>
 }
@@ -253,10 +287,16 @@ export const getServerSideProps = async (ctx) => {
     });
     let resultJob = await responseJob.json();
 
+    const responseCompany = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/company/get-by-id/${allCookies.companyId}`, {
+        method: 'GET'
+    })
+    const resultCompany = await responseCompany.json();
+
     return {
         props: {
             employee: resultEmp.employee,
-            jobs: resultJob.jobs
+            jobs: resultJob.jobs,
+            company: resultCompany.company
         }
     }
 }

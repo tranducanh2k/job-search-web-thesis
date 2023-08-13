@@ -16,7 +16,7 @@ const accountSchema = new Schema({
     },
     accountType: {
         type: String,
-        enum: [ACCOUNT_TYPE.EMPLOYEE, ACCOUNT_TYPE.COMPANY],
+        enum: [ACCOUNT_TYPE.EMPLOYEE, ACCOUNT_TYPE.COMPANY, 'admin'],
         default: ACCOUNT_TYPE.EMPLOYEE
     }
 });

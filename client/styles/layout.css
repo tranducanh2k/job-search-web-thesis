@@ -101,3 +101,31 @@
     font-weight: 600;
     font-size: 1.1rem;
 }
+
+#noti {
+    position: absolute;
+    background-color: white;
+    padding: 15px;
+    border-radius: 6px;
+    box-shadow: 1px 3px 9px rgba(0, 0, 0, 0.3);
+    color: black;
+    width: 270px;
+    right: 0;
+    max-height: 600px;
+    overflow-y: auto;
+}
+#noti-wrap {
+    position: relative;
+}
+#noti .noti-item {
+    padding: 10px 0 10px 0;
+    border-bottom: 1px solid rgb(208, 208, 208);
+}
+#noti .noti-item span {
+    color: #5cb4f7;
+}
+#noti .noti-item div:nth-child(3) {
+    color: rgb(95, 95, 95);
+    font-size: 0.9rem;
+    margin-top: 10px;
+}

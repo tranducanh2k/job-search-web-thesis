@@ -1,10 +1,40 @@
 import {Company} from '../models/index.js'
 
+export async function getAll(req, res) {
+
+    try {
+        const company = await Company.find({})
+                                    .populate('candidatesFollowing')
+                                    .populate({
+                                        path: 'candidatesFollowing',
+                                        populate: {
+                                            path: 'skill'
+                                        }
+                                    });
+        return res.status(200).json({
+            message: 'get company successfully',
+            company
+        })
+    } catch (err) {
+        console.log(err)
+        return res.status(404).json({
+            message: err
+        })
+    }
+}
+
 export async function getById(req, res) {
     const id = req.params.id;
 
     try {
-        const company = await Company.findById(id);
+        const company = await Company.findById(id)
+                                    .populate('candidatesFollowing')
+                                    .populate({
+                                        path: 'candidatesFollowing',
+                                        populate: {
+                                            path: 'skill'
+                                        }
+                                    });
         return res.status(200).json({
             message: 'get company successfully',
             company

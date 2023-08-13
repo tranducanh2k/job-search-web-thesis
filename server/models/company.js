@@ -52,7 +52,11 @@ const companySchema = new Schema({
     candidatesFollowing: [{
         type: mongoose.ObjectId,
         ref: "Employee"
-    }]
+    }],
+    status: {
+        type: String,
+        enum: ['enabled', 'disabled']
+    }
 });
 
 export default mongoose.model('Company', companySchema);

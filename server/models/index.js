@@ -8,6 +8,7 @@ import Interview from './interview.js'
 import InterviewInvitation from './interviewInvitation.js'
 import Job from './job.js'
 import Skill from './skill.js'
+import Notification from './notification.js';
 
 export {
     Account,
@@ -19,5 +20,6 @@ export {
     Interview,
     InterviewInvitation,
     Job,
-    Skill
+    Skill,
+    Notification
 }

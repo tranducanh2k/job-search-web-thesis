@@ -1,5 +1,20 @@
 import { Interview, ChatMessage } from "../models/index.js";
 
+export async function getAll(req, res) {
+    try {
+        let interview = await Interview.find({})
+        return res.status(200).json({
+            message: 'get all success',
+            interview
+        })
+    } catch(err) {
+        console.log(err)
+        return res.status(404).json({
+            message: err
+        })
+    }
+}
+
 export async function getByCompanyEmployee(req, res) {
     const companyId = req.body.companyId;
     const employeeId = req.body.employeeId;
@@ -122,3 +137,4 @@ export async function getInterviewById(req, res) {
         })
     }
 }
+

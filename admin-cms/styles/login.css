@@ -1,0 +1,25 @@
+#login {
+    background-image: url('../public/images/blue.webp');
+    background-position: center;
+    background-size: cover;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+#login > div {
+    background-color: white;
+    padding: 30px;
+    border-radius: 6px;
+    box-shadow: 1px 3px 9px rgba(0, 0, 0, 0.3);
+}
+#login h1 {
+    color: white;
+}
+#login .logo {
+    background-image: url('../public/images/vecteezy_job-search-logo_8688110.jpg');
+    background-size: contain;
+    width: 150px;
+    height: 140px;
+}

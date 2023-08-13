@@ -23,10 +23,10 @@ export default function SignUp(props) {
             const responseComp = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/company/create-or-update-company`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({...values, accountId: resultReg.accountId})
+                body: JSON.stringify({...values, accountId: resultReg.accountId, status: 'disabled'})
             })
             if(responseComp.status == 200) {
-                messageApi.success('You haved created company account successfully!')
+                messageApi.success('You have sended company account request successfully, wait for admin to activate')
             } else {
                 messageApi.error('Create company account failed')
             }

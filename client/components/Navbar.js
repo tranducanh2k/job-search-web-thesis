@@ -1,5 +1,5 @@
 import Image from 'next/image'; 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {AiFillPhone, AiOutlineUser} from "react-icons/ai";
 import {BsArrowLeft} from "react-icons/bs";
 import {BiSolidBookAlt, BiSolidUser, BiLogOut} from "react-icons/bi";
@@ -11,7 +11,9 @@ import { Input, Button, Space, Form, Alert, message, Dropdown } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { checkCreatedEmployee, login, logout } from '../redux/authSlice';
 import { useRouter } from 'next/router'
-import {clearCookies, setLoginCookies} from '../utils/cookieHandler';
+import {BellOutlined} from '@ant-design/icons'
+import {clearCookies, getCookiesClientSide, setLoginCookies} from '../utils/cookieHandler';
+import { formatDate } from '../utils/helper';
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Navbar() {
@@ -25,6 +27,9 @@ export default function Navbar() {
     const [signupAlertMessage, setSignupAlertMessage] = useState('');
     const [signupAlertType, setSignupAlertType] = useState('');
     const [showSigninAlert, setShowSigninAlert] = useState(false);
+    const [showNoti, setShowNoti] = useState(false)
+    const accountId = getCookiesClientSide('accountId');
+    const [noti, setNoti] = useState([])
 
     const profileMenuItems = [
         {
@@ -244,6 +249,19 @@ export default function Navbar() {
         </div>
     );
 
+    async function getNoti() {
+        let response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/account/get-noti-by-account-id/${accountId}`, {
+            method: 'GET',
+            headers: { 
+                'Content-Type': 'application/json'
+            }
+        });
+        let result = await response.json()
+        if(response.status == 200) {
+            setNoti(result.noti)
+        }
+    }
+
     return <div id="navbar">
         {contextHolder}
         <div>
@@ -286,8 +304,30 @@ export default function Navbar() {
                 }
             </div>
             <div>
+                {
+                    authState.currentUser && authState.currentUser.username && 
+                    <span id='noti-wrap'>
+                        <BellOutlined style={{fontSize:'20px', cursor:'pointer'}} onClick={()=> {
+                            setShowNoti(prev => !prev);
+                            getNoti();
+                        }} />
+                        {
+                            showNoti && <div id='noti'>
+                                {
+                                    noti.map(i => {
+                                        return <div className='noti-item'>
+                                            <span>Admin</span>
+                                            <div>{i.content}</div>
+                                            <div>{formatDate(i.timestamp)}</div>
+                                        </div>
+                                    })
+                                }
+                            </div>
+                        }
+                    </span>
+                }
                 {authState.currentUser && authState.currentUser.username? 
-                    <Dropdown menu={{items: profileMenuItems}} placement="bottomRight">
+                    <Dropdown menu={{items: profileMenuItems, style: {width:'210px'}}} placement="bottomRight">
                         <a id='login-username'>
                             {authState.currentUser.accountType}:&nbsp;
                             {authState.currentUser.username}&nbsp;&nbsp;<IoMdArrowDropdown style={{transform:'scale(1.5)'}}/>

@@ -106,3 +106,14 @@
     justify-content: space-between;
     margin-bottom: 15px;
 }
+
+#candidates-following > div {
+    display: grid;
+    grid-template-columns: repeat(3, 31%);
+    grid-auto-rows: 410px;
+    flex: 1;
+    gap: 20px;
+}
+#candidates-following #employee-item {
+    height: 400px;
+}

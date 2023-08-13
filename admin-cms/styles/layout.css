@@ -1,0 +1,62 @@
+#main-layout {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+#main-layout .navbar {
+    background-color: #102454;
+    width: 300px;
+}
+#main-layout .body-content {
+    overflow-y: auto;
+    height: calc(100vh - 70px);
+    padding: 20px;
+}
+#main-layout .logo {
+    background-image: url('../public/images/vecteezy_job-search-logo_8688110.jpg');
+    background-size: contain;
+    width: 90px;
+    height: 80px;
+    padding: 30px;
+    border-radius: 6px;
+    background-color: #3b78dc;
+    margin-bottom: 80px;
+}
+#main-layout .navbar {
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0 20px 0;
+    font-size: 1.3rem;
+}
+#main-layout .navbar > div:nth-child(2) {
+    width: 100%;
+}
+#main-layout .navbar svg {
+    margin-right: 10px;
+}
+#main-layout .nav-items {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 15px 0 15px 70px;
+    column-gap: 15px;
+    cursor: pointer;
+}
+#main-layout .nav-items.cur, #main-layout .nav-items:hover {
+    background-color: #0a1d47;
+}
+#main-layout > div:nth-child(2) {
+    height: 100vh;
+    flex: 1;
+}
+#main-layout > div:nth-child(2) > header {
+    width: 100%;
+    height: 70px;
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.3);
+    display: flex;
+    padding-right: 100px;
+    align-items: center;
+    justify-content: flex-end;
+}

@@ -1,0 +1,26 @@
+#dashboard {
+    padding: 30px;
+}
+#dashboard > div {
+    column-gap: 30px;
+    display: flex;
+    flex-direction: row;
+}
+#dashboard > div > div {
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    padding: 30px;
+}
+#dashboard > div > div header {
+    font-weight: 600;
+    font-size: 1.3rem;
+    color: #3b78dc;
+    margin-bottom: 20px;
+}
+#dashboard > div > div header svg {
+    margin-right: 15px;
+}
+#dashboard span {
+    font-size: 2rem;
+    font-weight: 500;
+}
