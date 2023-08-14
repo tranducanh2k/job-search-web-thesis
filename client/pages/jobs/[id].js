@@ -206,10 +206,9 @@ export default function JobDetail({job, employee}) {
                     </div>
                     <div className='float-div'>
                         {
-                            accountType !== 'company' &&
+                            accountType !== 'company' && accountType &&
                             <>
                                 <Button type='primary' onClick={() => setShowModal(true)}>Apply Now</Button><br/>
-                                <span>or</span><br/>
                                 {
                                     showUnfollowBtn? 
                                     <Button danger onClick={() => handleFollowJob()}>Unfollow Job</Button> :
@@ -217,7 +216,7 @@ export default function JobDetail({job, employee}) {
                                 }
                             </>
                         }
-                        <div>
+                        <div className='location'>
                             <div className='info-title'>Location</div>
                             <ul>
                                 {
@@ -306,7 +305,7 @@ export const getServerSideProps = async (ctx) => {
     return {
         props: {
             job: result.job,
-            employee: resultEmp.employee
+            employee: resultEmp.employee?? []
         }
     }
 }

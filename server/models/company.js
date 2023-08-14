@@ -15,23 +15,23 @@ const companySchema = new Schema({
     image: {
         type: String
     },
-    name: {
+    name: { //
         type: String,
         required: true
     },
-    description: {
+    description: { //
         type: String,
         required: true
     },
     website: {
         type: String
     },
-    province: {
+    province: { //
         type: String,
         required: true
     },
     address: [String],
-    companySize: {
+    companySize: { //
         type: String,
         required: true,
         enum: [COMPANY_SIZE.SIZE1, COMPANY_SIZE.SIZE2, COMPANY_SIZE.SIZE3, COMPANY_SIZE.SIZE4,
@@ -45,7 +45,7 @@ const companySchema = new Schema({
         type: mongoose.ObjectId,
         ref: "Skill"
     }],
-    country: {
+    country: { //
         type: String,
         required: true
     },
@@ -58,5 +58,13 @@ const companySchema = new Schema({
         enum: ['enabled', 'disabled']
     }
 });
+
+companySchema.index({
+    name: 'text',
+    province: 'text',
+    address: 'text',
+    industry: 'text',
+    country: 'text'
+})
 
 export default mongoose.model('Company', companySchema);

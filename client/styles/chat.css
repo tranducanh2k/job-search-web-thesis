@@ -135,3 +135,6 @@
 #interview .info-div > div a {
     color: rgb(0, 132, 255);
 }
+*:has(#interview) #footer {
+    display: none;
+}

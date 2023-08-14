@@ -3,6 +3,7 @@ import '../styles/login.css';
 import '../styles/layout.css'
 import '../styles/dashboard.css'
 import '../styles/skill.css'
+import '../styles/company.css'
 import { wrapper } from '../redux/store.js';
 import { PersistGate } from 'redux-persist/integration/react';
 import { useStore } from 'react-redux';

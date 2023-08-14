@@ -296,11 +296,16 @@ export default function Navbar() {
                 <a onClick={() => router.push('/jobs')}>IT Jobs</a>
                 <a onClick={() => router.push('/companies')}>IT Companies</a>
                 {
+                    authState.currentUser?.accountType === 'company' && 
+                    <a onClick={() => router.push('/company-profile/candidates-following')}>Employee Following</a>
+                }
+                {
                     authState.currentUser?.accountType === 'employee' && 
                     <a onClick={() => router.push('/profile/job-following')}>Jobs Following</a>
                 }
                 {
-                    authState.currentUser?.accountType === 'employee' && <a>Recommended Jobs</a>
+                    authState.currentUser?.accountType === 'employee' && 
+                    <a onClick={() => router.push('/jobs/recommend')}>Recommended Jobs</a>
                 }
             </div>
             <div>

@@ -189,7 +189,7 @@ JobInvitation.Layout = ProfileLayout;
 
 export const getServerSideProps = wrapper.getServerSideProps(store => async (ctx) => {
     let allCookies = cookies({req: ctx.req});
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/invite/get-by-company-id/${allCookies.companyId}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/invite/get-by-employee-id/${allCookies.employeeId}`, {
         method: 'GET',
         headers: { 
             'Content-Type': 'application/json'
@@ -199,7 +199,7 @@ export const getServerSideProps = wrapper.getServerSideProps(store => async (ctx
 
     return {
         props: {
-            invitations: result.invites
+            invitations: result.invites?? []
         }
     }
 })

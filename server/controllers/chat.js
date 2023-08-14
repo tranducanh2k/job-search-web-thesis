@@ -1,8 +1,10 @@
-import { Interview, ChatMessage } from "../models/index.js";
+import { Interview, ChatMessage, Application, InterviewInvitation } from "../models/index.js";
 
 export async function getAll(req, res) {
     try {
-        let interview = await Interview.find({})
+        let interview = await Interview.find({}).populate('companyId')
+                                        .populate('employeeId')
+                                        .populate('acceptedJobsList')
         return res.status(200).json({
             message: 'get all success',
             interview
@@ -138,3 +140,21 @@ export async function getInterviewById(req, res) {
     }
 }
 
+export async function adminDelete(req, res) {
+    let id = req.params.id;
+
+    try {
+        let deleteInterview = await Interview.findByIdAndDelete(id);
+        await ChatMessage.deleteMany({interviewId: id})
+        await Application.deleteMany({ employeeId: deleteInterview.employeeId, companyId: deleteInterview.companyId })
+        await InterviewInvitation.deleteMany({ employeeId: deleteInterview.employeeId, companyId: deleteInterview.companyId })
+        return res.status(200).json({
+            message: 'Delete interview successfully'
+        })
+    } catch(err) {
+        console.log(err)
+        return res.status(404).json({
+            message: 'Delete interview failed'
+        })
+    }
+}

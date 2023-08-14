@@ -12,7 +12,7 @@ export default function JobFollowing({employee}) {
     const token = getCookiesClientSide('jwt');
     const [messageApi, contextHolder] = message.useMessage();
     const accountId = useSelector((state) => state.auth.currentUser?.accountId);
-    const [jobsFollowing, setJobsFollowing] = useState(employee.jobsFollowing?? []);
+    const [jobsFollowing, setJobsFollowing] = useState(employee?.jobsFollowing?? []);
 
     const handleUnfollow = async (jobId) => {
         let jobsFollowing = employee.jobsFollowing?? [];

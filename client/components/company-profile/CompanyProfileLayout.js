@@ -46,9 +46,6 @@ export default function CompanyProfileLayout({children}) {
             >
                 <ImHeart/>Candidates Following
             </div>
-            <div>
-                <BsChatText/>Chat Rooms
-            </div>
             <div 
                 onClick={() => {
                     dispatch(logout());

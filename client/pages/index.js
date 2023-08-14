@@ -1,7 +1,8 @@
 
 export default function Home() {
     return (
-        <div>
+        <div id='home'>
+            <h1>Start connecting with Employers</h1>
             <img 
                 src="/images/landing.png" 
                 alt="landing"

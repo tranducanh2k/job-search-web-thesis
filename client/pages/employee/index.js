@@ -23,7 +23,7 @@ export default function Employee(props) {
     const handleSearch = async (text) => {
         if(text) {
             setLoading(true);
-            const response = await fetch(`${API_URL}/job/search`, {
+            const response = await fetch(`${API_URL}/employee/search`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
@@ -33,82 +33,31 @@ export default function Employee(props) {
             if(response.status == 200) {
                 let result = await response.json();
                 setLoading(false);
-                setJobsList(result.jobs);
+                setEmployeeList(result.employees);
             } else {
                 setLoading(false);
             }
         } else {
-            setJobsList(props.jobsList);
+            setEmployeeList(props.employeeList);
         }
     }
     const onFinish = (values) => {
-        setJobsList(props.jobsList);
-        if(values.salary) {
-            switch(values.salary) {
-                case 'Negotiable':
-                    setJobsList(prev => prev.filter(item => !item.minSalary && !item.maxSalary));
-                    break;
-                case 'Under 500$':
-                    setJobsList(prev => prev.filter(item => item.minSalary <= 500 || item.maxSalary <= 500));
-                    break;
-                case '500$ - 1000$':
-                    setJobsList(prev => prev.filter(item => (item.minSalary >= 500 && item.minSalary <= 1000) || (item.maxSalary >= 500 && item.maxSalary <= 1000)));
-                    break;
-                case '1000$ - 3000$':
-                    setJobsList(prev => prev.filter(item => (item.minSalary >= 1000 && item.minSalary <= 3000) || (item.maxSalary >= 1000 && item.maxSalary <= 3000)));
-                    break;
-                case '3000$ - 5000$':
-                    setJobsList(prev => prev.filter(item => (item.minSalary >= 3000 && item.minSalary <= 5000) || (item.maxSalary >= 3000 && item.maxSalary <= 5000)));
-                    break;
-                case 'Over 5000$':
-                    setJobsList(prev => prev.filter(item => item.minSalary >= 5000 || item.minSalary >= 5000));
-                    break;
-                default:
-                    break;
-            }
+        setEmployeeList(props.employeeList);
+        if(values.minAge) {
+            setEmployeeList(prev => prev.filter(item => item.age >= values.minAge))
         }
-        if(values.experience) {
-            switch(values.experience) {
-                case 'Under 6 months':
-                    setJobsList(prev => prev.filter(item => item.requiredExperience <= 6));
-                    break;
-                case '6 - 12 months':
-                    setJobsList(prev => prev.filter(item => item.requiredExperience >= 6 && item.requiredExperience <= 12));
-                    break;
-                case '1 - 3 years':
-                    setJobsList(prev => prev.filter(item => item.requiredExperience >= 12 && item.requiredExperience <= 36));
-                    break;
-                case '3 - 6 years':
-                    setJobsList(prev => prev.filter(item => item.requiredExperience >= 36 && item.requiredExperience <= 72));
-                    break;
-                case 'Over 6 years':
-                    setJobsList(prev => prev.filter(item => item.requiredExperience >= 72));
-                    break;
-                default:
-                    break;
-            }
+        if(values.maxAge) {
+            setEmployeeList(prev => prev.filter(item => item.age <= values.maxAge))
         }
-        if(values.jobLevel) {
-            setJobsList(prev => prev.filter(item => item.jobLevel === values.jobLevel));
-        }
-        if(values.jobType) {
-            setJobsList(prev => prev.filter(item => item.jobType === values.jobType));
-        }
-        if(values.fullTime?.length == 1) {
-            if(values.fullTime[0] == true) {
-                setJobsList(prev => prev.filter(item => item.fullTime));
+        if(values.gender?.length == 1) {
+            if(values.gender[0] == 'male') {
+                setEmployeeList(prev => prev.filter(item => item.gender == 'male'));
             } else {
-                setJobsList(prev => prev.filter(item => item.fullTime == undefined || item.fullTime == false));
+                setEmployeeList(prev => prev.filter(item => item.gender == 'female'));
             }
         }
-        if(values.province) {
-            setJobsList(prev => prev.filter(item => item.companyId.province == values.province));
-        }
-        if(values.country) {
-            setJobsList(prev => prev.filter(item => item.companyId.country == values.country));
-        }
-        if(values.industry) {
-            setJobsList(prev => prev.filter(item => item.companyId.industry.includes(values.industry)));
+        if(values.skill) {
+            setEmployeeList(prev => prev.filter(item => item.skill.filter(s => s.skillName == values.skill).length))
         }
     } 
 
@@ -119,7 +68,7 @@ export default function Employee(props) {
     return <div id='jobs' className='employee'>
         <div className='main-search'>
             <Search
-                placeholder="Search by job, company, tech stack, ..."
+                placeholder="Search by name, gender, address, province, school, company, certificate"
                 allowClear
                 enterButton="Search"
                 size="large"
@@ -139,57 +88,26 @@ export default function Employee(props) {
                         onFinish={onFinish}
                         layout="vertical"
                     >
-                        <Form.Item name='jobLevel' label='Job Level'>
-                            <Select placeholder='Select job level' allowClear>
+                        <Form.Item name='minAge' label='Min Age'>
+                            <InputNumber min={0} />
+                        </Form.Item>
+                        <Form.Item name='maxAge' label='Max Age'>
+                            <InputNumber min={0} />
+                        </Form.Item>
+                        <Form.Item name='skill' label='Skill' >
+                            <Select placeholder='Select skill' allowClear>
                                 {
-                                    Object.values(JOB_LEVEL).map(i => {
-                                        return <Option value={i}>{i}</Option>
+                                    props.skills.map(i => {
+                                        return <Option value={i.skillName}>{i.skillName}</Option>
                                     })
                                 }
                             </Select>
                         </Form.Item>
-                        <Form.Item name='jobType' label='Job Type' >
-                            <Select placeholder='Select job type' allowClear>
-                                {
-                                    Object.values(JOB_TYPE).map(i => {
-                                        return <Option value={i}>{i}</Option>
-                                    })
-                                }
-                            </Select>
-                        </Form.Item>
-                        <Form.Item label="Full-time or Part-time" name="fullTime">
+                        <Form.Item label="Gender" name="gender">
                             <Checkbox.Group>
-                                <Checkbox value={true}>Full-time</Checkbox>
-                                <Checkbox value={false}>Part-time</Checkbox>
+                                <Checkbox value={'male'}>Male</Checkbox>
+                                <Checkbox value={'female'}>Female</Checkbox>
                             </Checkbox.Group>
-                            {/* <Checkbox value={false}>Part-time</Checkbox> */}
-                        </Form.Item>
-                        <Form.Item name='province' label='Province' >
-                            <Select placeholder='Select province' allowClear>
-                                {
-                                    Object.values(PROVINCES).map(i => {
-                                        return <Option value={i}>{i}</Option>
-                                    })
-                                }
-                            </Select>
-                        </Form.Item>
-                        <Form.Item name='country' label='Country' >
-                            <Select placeholder='Select country' allowClear>
-                                {
-                                    Object.values(COUNTRY).map(i => {
-                                        return <Option value={i}>{i}</Option>
-                                    })
-                                }
-                            </Select>
-                        </Form.Item>
-                        <Form.Item name='industry' label='Industry' >
-                            <Select placeholder='Select industry' allowClear>
-                                {
-                                    Object.values(INDUSTRY).map(i => {
-                                        return <Option value={i}>{i}</Option>
-                                    })
-                                }
-                            </Select>
                         </Form.Item>
                         <Form.Item>
                             <Space size='large'>
@@ -233,9 +151,15 @@ export const getServerSideProps =  wrapper.getServerSideProps(store => async (ct
     });
     let result = await response.json();
 
+    const responseSkill = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/skill`, {
+        method: 'GET'
+    })
+    const resultSkill = await responseSkill.json();
+
     return {
         props: {
-            employeeList: result.employeeList
+            employeeList: result.employeeList,
+            skills: resultSkill.skills
         }
     }
 })

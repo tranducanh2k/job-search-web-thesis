@@ -62,4 +62,15 @@ const employeeSchema = new Schema({
     }
 });
 
+employeeSchema.index({ 
+    name: 'text',
+    gender: 'text',
+    address: 'text',
+    province: 'text',
+    'education.schoolName': 'text',
+    'education.field': 'text',
+    'experience.companyName': 'text',
+    'certificate.certName': 'text'
+});
+
 export default mongoose.model('Employee', employeeSchema);

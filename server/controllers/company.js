@@ -1,4 +1,4 @@
-import {Company} from '../models/index.js'
+import {Account, Application, ChatMessage, Company, Interview, InterviewInvitation, Job, Notification} from '../models/index.js'
 
 export async function getAll(req, res) {
 
@@ -10,7 +10,8 @@ export async function getAll(req, res) {
                                         populate: {
                                             path: 'skill'
                                         }
-                                    });
+                                    })
+                                    .populate('tech');
         return res.status(200).json({
             message: 'get company successfully',
             company
@@ -25,9 +26,10 @@ export async function getAll(req, res) {
 
 export async function getById(req, res) {
     const id = req.params.id;
+    const populateTech = req.query.populateTech;
 
     try {
-        const company = await Company.findById(id)
+        let company = await Company.findById(id)
                                     .populate('candidatesFollowing')
                                     .populate({
                                         path: 'candidatesFollowing',
@@ -35,6 +37,16 @@ export async function getById(req, res) {
                                             path: 'skill'
                                         }
                                     });
+        if(populateTech) {
+            company = await Company.findById(id)
+                                    .populate('candidatesFollowing')
+                                    .populate({
+                                        path: 'candidatesFollowing',
+                                        populate: {
+                                            path: 'skill'
+                                        }
+                                    }).populate('tech');
+        }
         return res.status(200).json({
             message: 'get company successfully',
             company
@@ -80,6 +92,53 @@ export async function createOrUpdateCompany(req, res) {
         console.log(err)
         return res.status(404).json({
             message: err
+        })
+    }
+}
+
+export async function search(req, res) {
+    const {searchText} = req.body;
+    
+    try {
+        let companies = await Company.find({$text: { $search: searchText }}, {score: {$meta: 'textScore'}})
+                                .sort({score: {$meta: 'textScore'}}).populate('tech');
+
+        if(!companies.length) {
+            companies = await Company.find({ name: {$regex: searchText, $options: 'i' } })
+                            .populate('tech');
+        }
+
+        return res.status(200).json({
+            message: 'search companies successfully',
+            companies
+        })
+    } catch (err) {
+        console.log(err)
+        return res.status(404).json({
+            message: 'search companies failed'
+        })
+    }
+}
+
+export async function adminDelete(req, res) {
+    let id = req.params.id;
+
+    try {
+        let deleteCompany = await Company.findByIdAndDelete(id);
+        await Account.findByIdAndDelete(deleteCompany.accountId)
+        await Application.deleteMany({ companyId: id })
+        await InterviewInvitation.deleteMany({ companyId: id })
+        await Interview.deleteMany({companyId: id})
+        await ChatMessage.deleteMany({senderId: id})
+        await Notification.deleteMany({accountId: deleteCompany.accountId })
+        await Job.deleteMany({companyId: id})
+        return res.status(200).json({
+            message: 'Delete company successfully'
+        })
+    } catch(err) {
+        console.log(err)
+        return res.status(404).json({
+            message: 'Delete company failed'
         })
     }
 }

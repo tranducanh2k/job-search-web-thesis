@@ -24,13 +24,13 @@ function MyApp({ Component, pageProps }) {
                     <Component.Layout>
                         <Component {...pageProps} />
                     </Component.Layout> 
-                    {/* <Footer /> */}
+                    <Footer />
                 </>
                 :
                 <>
                     <Navbar />
                     <Component {...pageProps} />
-                    {/* <Footer /> */}
+                    <Footer />
                 </>
             }
         </PersistGate>

@@ -121,37 +121,38 @@ console.log(showUnfollowBtn)
             </div>
         </Modal>
 
-    console.log(employee)
     return <div id='employee-detail'>
         {modalInvite}
         {contextHolder}
         <div className='employee-info'>
             <div className='first panel'>
                 <div>
-                    <Image 
-                        width={130}
-                        height={130}
-                        style={{border:'1px solid #d4d4d4', borderRadius:'6px', objectFit: 'contain'}}
-                        src={employee.avatar}
-                        fallback="https://static.vecteezy.com/system/resources/previews/004/141/669/original/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg"        
-                    />
-                </div>
-                <div>
-                    <div className='employee-name'>{employee.name}</div>
-                    <div className='employee-gender'>{employee.gender}</div>
+                    <div>
+                        <Image 
+                            width={130}
+                            height={130}
+                            style={{border:'1px solid #d4d4d4', borderRadius:'6px', objectFit: 'contain'}}
+                            src={employee.avatar}
+                            fallback="https://static.vecteezy.com/system/resources/previews/004/141/669/original/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg"        
+                        />
+                    </div>
+                    <div>
+                        <div className='employee-name'>{employee.name}</div>
+                        <div className='employee-gender'>Gender: {employee.gender}</div>
+                    </div>
                 </div>
                 <div className='personal-info'>
                     <header>Personal Info</header>
                     <div>
-                        <span>Age: <span>{employee.age}</span></span>
-                        <span>Phone: <span>{employee.phone}</span></span>
+                        <span><span>Age:</span> {employee.age}</span>
+                        <span><span>Phone:</span> {employee.phone}</span>
                     </div>
                     <div>
-                        <span>Email: <span>{employee.email}</span></span>
-                        <span>Province: <span>{employee.province}</span></span>
+                        <span><span>Email:</span> {employee.email}</span>
+                        <span><span>Province:</span> {employee.province}</span>
                     </div>
                     <div>
-                        <span>Address: <span>{employee.address}</span></span>
+                        <span><span>Address:</span> {employee.address}</span>
                     </div>
                 </div>
             </div>
@@ -168,7 +169,7 @@ console.log(showUnfollowBtn)
                                     <div>
                                         <FaUserGraduate/>
                                         <div>
-                                            <div>{i.schoolName}</div>
+                                            <div>School: {i.schoolName}</div>
                                             <div>Field: {i.field}</div>
                                         </div>
                                     </div>
@@ -208,7 +209,7 @@ console.log(showUnfollowBtn)
                                     <div>
                                         <GrCertificate/>
                                         <div>
-                                            <div>{i.certName}</div>
+                                            <div>Certificate: {i.certName}</div>
                                             <div>Description: {i.description}</div>
                                         </div>
                                     </div>

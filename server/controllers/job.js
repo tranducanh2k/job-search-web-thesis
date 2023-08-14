@@ -1,4 +1,5 @@
-import {Company, Job} from '../models/index.js';
+import {Application, Company, Employee, Job, RecommendData} from '../models/index.js';
+import { calcSimilarities, createVectorsFromDocs, formatData } from '../utils/recommend.js';
 
 export async function getJobById(req, res) {
     const id = req.params.id;
@@ -51,9 +52,14 @@ export async function getJobsByPage(req, res) {
 
 export async function getJobsByCompanyId(req, res) {
     const id = req.params.id;
+    const populate = req.query.populate;
 
     try {
         let jobs = await Job.find({ companyId: id }).populate('requiredSkill');
+        if(populate) {
+            jobs = await Job.find({ companyId: id }).populate('requiredSkill')
+                                                    .populate('companyId');
+        }
         return res.status(200).json({
             message: 'get jobs by company id successfully',
             jobs
@@ -176,6 +182,76 @@ export async function search(req, res) {
         console.log(err)
         return res.status(404).json({
             message: 'search job failed'
+        })
+    }
+}
+
+export async function calculateRecommend(req, res) {
+    
+    try {
+        let jobData = await Job.find({});
+
+        if(jobData) {
+            const formattedData = formatData(jobData);
+            const docVectors = createVectorsFromDocs(formattedData)
+            const trainedData = calcSimilarities(docVectors)
+            let trainedJobData = await RecommendData.findOne({ name: 'job' })
+            if(!trainedJobData) {
+                await RecommendData.create({ name: 'job', data: JSON.stringify(trainedData) })
+            } else {
+                await RecommendData.findOneAndUpdate({ name: 'job' }, {data: JSON.stringify(trainedData)})
+            }
+
+            return res.status(200).json({
+                message: 'calculate recommend successfully'
+            })
+        } else {
+            return res.status(404).json({
+                message: 'no job created'
+            })
+        }
+    } catch (err) {
+        console.log(err)
+        return res.status(404).json({
+            message: 'calculate recommend failed'
+        })
+    }
+}
+
+export async function getRecommend(req, res) {
+    const id = req.params.id;
+    try {
+        let favoriteJobs = [];
+        let employee = await Employee.findById(id);
+        favoriteJobs.push(employee.jobsFollowing?? []);
+        let application = await Application.find({employeeId: id});
+        application.map(i => {
+            favoriteJobs.push(i.jobId);
+        })
+        favoriteJobs = favoriteJobs.flat();
+        favoriteJobs = favoriteJobs.filter((item, index) => favoriteJobs.indexOf(item) === index);
+        
+        let recommendData = await RecommendData.findOne({name: 'job'});
+        let recommendDataObj = JSON.parse(recommendData.data);
+        let returnJobs = [];
+        favoriteJobs.map(i => {
+            returnJobs.push(recommendDataObj[i])
+        })
+        returnJobs = returnJobs.flat();
+        returnJobs = returnJobs.filter((item, index) => returnJobs.indexOf(item) === index);
+        returnJobs = returnJobs.map(i => i.id);
+
+        let result = await Job.find({ _id: { $in: returnJobs } })
+                                .populate('requiredSkill')
+                                .populate('companyId');
+        return res.status(200).json({
+            message: 'get recommend successfully',
+            result
+        })
+    } catch (err) {
+        console.log(err)
+        return res.status(404).json({
+            message: 'get recommend failed'
         })
     }
 }

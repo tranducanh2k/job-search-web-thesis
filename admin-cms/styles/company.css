@@ -1,0 +1,30 @@
+#company > div {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    row-gap: 30px;
+    column-gap: 30px;
+}
+#company .company-item {
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    padding: 30px;
+    cursor: pointer;
+}
+#company .company-item:hover {
+    background-color: rgb(250, 250, 250);
+}
+#company .company-item .name {
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: #3b78dc;
+    margin-bottom: 15px;
+}
+#company .company-item .name + div {
+    margin-bottom: 20px;
+}
+#company .company-item button {
+    margin-right: 10px;
+}
+.highlight {
+    font-weight: 700;
+}

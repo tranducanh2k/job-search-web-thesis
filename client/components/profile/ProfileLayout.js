@@ -36,9 +36,6 @@ export default function ProfileLayout({children}) {
             >
                 <ImHeart/>Jobs Following
             </div>
-            <div>
-                <BsChatText/>Chat Rooms
-            </div>
             <div 
                 onClick={() => {
                     dispatch(logout());

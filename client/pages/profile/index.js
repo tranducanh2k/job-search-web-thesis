@@ -56,7 +56,7 @@ export default function MyProfile({employeeData, certs, skills}) {
     };
 
     const [avatarFileList, setAvatarFileList] = useState();
-    const [avaUrl, setAvaUrl] = useState(employeeData.avatar?? 'https://static.vecteezy.com/system/resources/previews/004/141/669/original/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg');
+    const [avaUrl, setAvaUrl] = useState(employeeData?.avatar?? 'https://static.vecteezy.com/system/resources/previews/004/141/669/original/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg');
     const [cvFile, setCvFile] = useState();
     
     const onChangeAvatar = ({ fileList: newFileList }) => {
@@ -68,7 +68,7 @@ export default function MyProfile({employeeData, certs, skills}) {
 
     const onFinishForm = async (values) => {
         setLoading(true);
-        let avatarUrl = employeeData.avatar;
+        let avatarUrl = employeeData?.avatar;
         if(avatarFileList?.length) {
             const imageUpload = avatarFileList[0].originFileObj;
             const imageRef = ref(storage, `images/${imageUpload.name + v4()}`);
@@ -76,7 +76,7 @@ export default function MyProfile({employeeData, certs, skills}) {
             avatarUrl = await getDownloadURL(snapshot.ref);
             setAvaUrl(avatarUrl);
         }
-        let currentCvUrl = employeeData.cv;
+        let currentCvUrl = employeeData?.cv;
         if(cvFile) {
             const cvUpload = cvFile.originFileObj;
             const cvRef = ref(storage, `cv/${cvUpload.name + '?' + v4()}`);
@@ -394,10 +394,10 @@ export default function MyProfile({employeeData, certs, skills}) {
                 <Upload
                     accept="application/pdf"
                     onChange={onChangeCv}
-                    fileList={cvFile? [cvFile] : (employeeData.cv? [{
-                        uid: employeeData.cv,
-                        url: employeeData.cv,
-                        name: extractFileName(employeeData.cv),
+                    fileList={cvFile? [cvFile] : (employeeData?.cv? [{
+                        uid: employeeData?.cv,
+                        url: employeeData?.cv,
+                        name: extractFileName(employeeData?.cv),
                         status: 'done'
                     }] : [])}
                     maxCount={1}
@@ -417,7 +417,7 @@ export default function MyProfile({employeeData, certs, skills}) {
 MyProfile.Layout = ProfileLayout;
 
 export const getServerSideProps = wrapper.getServerSideProps(store => async ({req, res}) => {
-    let employeeData = null;
+    let employeeData = {};
     let allCookies = cookies({ req });
 
     const authResponse = await fetch(`${API_URL}/isAuth`, {

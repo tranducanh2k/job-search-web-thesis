@@ -132,3 +132,36 @@
     overflow: auto;
     height: 280px;
 }
+
+#employee-detail .first.panel {
+    display: flex;
+    justify-content: space-between;
+}
+#employee-detail .first.panel > div:nth-child(1) {
+    display: flex;
+    column-gap: 30px;
+}
+#employee-detail .personal-info header {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+#employee-detail .personal-info > div > span > span {
+    font-weight: 500;
+}
+#employee-detail .personal-info > div > span {
+    margin: 7px;
+}
+#employee-detail .personal-info > div {
+    display: flex;
+    justify-content: space-between;
+}
+#employee-detail .expertise-info header {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #3b78dc;
+    margin-bottom: 15px;
+}
+#employee-detail .expertise-info .panel > div {
+    display: flex;
+    column-gap: 10px;
+}

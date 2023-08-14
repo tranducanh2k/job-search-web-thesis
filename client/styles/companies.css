@@ -1,3 +1,24 @@
 #companies {
     padding: 40px 5vw;
 }
+#job-detail.company-detail .float-div {
+    width: 800px !important;
+    margin-left: 60px;
+}
+#job-detail.company-detail .company-info .title {
+    font-weight: 600;
+    font-size: 1.3rem;
+    margin: 20px 0 0 20px;
+}
+#job-detail.company-detail .company-info .info-title {
+    color: #3b78dc;
+}
+#job-detail.company-detail li {
+    margin-left: 30px;
+    margin-top: 10px;
+}
+#job-detail.company-detail .job-list {
+    background-color: white;
+    border-radius: 6px;
+    padding: 30px;
+}

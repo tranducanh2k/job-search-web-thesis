@@ -9,6 +9,7 @@ import InterviewInvitation from './interviewInvitation.js'
 import Job from './job.js'
 import Skill from './skill.js'
 import Notification from './notification.js';
+import RecommendData from './recommendData.js';
 
 export {
     Account,
@@ -21,5 +22,6 @@ export {
     InterviewInvitation,
     Job,
     Skill,
-    Notification
+    Notification,
+    RecommendData
 }

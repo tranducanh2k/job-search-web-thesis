@@ -23,7 +23,7 @@ export default function MainLayout({children}) {
                 </div>
                 <div 
                     className={`nav-items ${router.pathname.includes('/company')? 'cur' : ''}`}
-                    onClick={()=> router.push('/company/company-signup')}
+                    onClick={()=> router.push('/company')}
                 >
                     <BsFillBuildingFill/> Company
                 </div>
